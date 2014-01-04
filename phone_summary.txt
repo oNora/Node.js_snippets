@@ -1,0 +1,48 @@
+﻿Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
+HTC|http://www.htc.com/www/|One|217g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 3|133g
+Samsung|http://www.samsung.com/uk/#latest-home|Galaxy S 4|130g
+Apple|http://www.apple.com/am/iphone/|S5|132g
