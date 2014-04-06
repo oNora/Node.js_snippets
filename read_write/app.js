@@ -2,20 +2,20 @@ var fs = require("fs");
 fs.readFile('phone_summary.txt', 'utf8', function(error, data) {
 	var array = data.toString().split('\n'),
 		arrLength = array.length,
-		startHtml = '<!DOCTYPE html><html><head><title>node.js demo</title>'
-					+ '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'
-					+ '<link href="demo.css" rel="stylesheet"/></head><body>',
-		allTable = '<div><table>'
-					+ '<tr><th>Company</th><th>Model</th><th>weight</th></tr>',
-		closeTable = '</table></div>',
-		closeHtml = '</body></html>',
+		startHtml = '<!DOCTYPE html>\n<html>\n<head>\n<title>node.js demo</title>\n'
+					+ '<meta http-equiv="content-type" content="text/html; charset=utf-8" />\n'
+					+ '<link href="demo.css" rel="stylesheet"/></head>\n<body>\n',
+		allTable = '<div><table>\n'
+					+ '<tr><th>Company</th><th>Model</th><th>weight</th></tr>\n',
+		closeTable = '</table></div>\n',
+		closeHtml = '</body>\n</html>',
 		allHtml;
 
 	for (var i = 0; i < arrLength; i++) {
 		var currentRow = array[i].split('|');
-		var tableRow ='<tr><td>' + currentRow[0] + ' <br />(<a href="'+ currentRow[1] + '">'+ currentRow[1] + '</a>)</td>'
-						+ '<td>' + currentRow[2] + '</td>'
-						+ '<td>' + currentRow[3] + '</td></tr>';
+		var tableRow ='<tr><td>' + currentRow[0] + ' \n(<a href="'+ currentRow[1] + '">'+ currentRow[1] + '</a>)</td>\n'
+						+ '<td>' + currentRow[2] + '</td>\n'
+						+ '<td>' + currentRow[3] + '</td></tr>\n';
 		allTable += tableRow;
 	}
 	allTable += closeTable;
