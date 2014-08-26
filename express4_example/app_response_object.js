@@ -7,7 +7,8 @@ var	 app = express();
 app.set('port', process.env.POTR || 3000);
 app.set('views', __dirname + "/views");
 app.set("view engine", "jade");
-app.use(express.static(__dirname + '/publice'));
+// app.use(express.static(__dirname + '/publice'));
+app.use('/publice', express.static(__dirname + "/publice"));
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
@@ -22,7 +23,10 @@ app.get('/json', function(req, res) {
 
 app.get('/image', function(req, res) {
 	// res.type('image/png').send('this is a picture');
-	res.type('image/png').send('other_request_properties.png');
+	var image = __dirname + "/publice/ice_cream.png";
+	console.log(image);
+	// res.type('image/png').send(image);
+	res.send(image);
 	//this is not work because after send has no bites, no picture it is plane texts
 });
 
@@ -55,6 +59,9 @@ app.get('/', function(req, res) {
 	res.send('redirect from home');
 });
 
+app.get('/jade', function(req, res) {
+	 res.render("home");
+});
 
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
