@@ -1,6 +1,7 @@
 var express = require('express'),
 	bodyParser = require('body-parser'),
-	http = require('http');
+	http = require('http'),
+	fs = require('fs');
 
 var	 app = express();
 
@@ -8,7 +9,7 @@ app.set('port', process.env.POTR || 3000);
 app.set('views', __dirname + "/views");
 app.set("view engine", "jade");
 // app.use(express.static(__dirname + '/publice'));
-app.use('/static', express.static(__dirname + "/publice"));
+app.use('/publice', express.static(__dirname + "/publice"));
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
@@ -21,12 +22,11 @@ app.get('/json', function(req, res) {
 	res.json({massage: "something"});
 });
 
-app.get('/static', function(req, res) {
-	// this work
-	//res.type('image/png').sendfile('ice_cream.png');
+app.get('/publice', function(req, res) {
 	
-	// don't work
-	res.type('image/png').send('ice_cream.png');
+	var img = fs.readFileSync('./publice/ice_cream.png');
+	res.type('image/png').send(img);
+
 });
 
 
