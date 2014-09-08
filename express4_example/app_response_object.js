@@ -8,7 +8,7 @@ app.set('port', process.env.POTR || 3000);
 app.set('views', __dirname + "/views");
 app.set("view engine", "jade");
 // app.use(express.static(__dirname + '/publice'));
-app.use('/publice', express.static(__dirname + "/publice"));
+app.use('/static', express.static(__dirname + "/publice"));
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
@@ -21,13 +21,12 @@ app.get('/json', function(req, res) {
 	res.json({massage: "something"});
 });
 
-app.get('/image', function(req, res) {
-	// res.type('image/png').send('this is a picture');
-	var image = __dirname + "/publice/ice_cream.png";
-	console.log(image);
-	// res.type('image/png').send(image);
-	res.send(image);
-	//this is not work because after send has no bites, no picture it is plane texts
+app.get('/static', function(req, res) {
+	// this work
+	//res.type('image/png').sendfile('ice_cream.png');
+	
+	// don't work
+	res.type('image/png').send('ice_cream.png');
 });
 
 
