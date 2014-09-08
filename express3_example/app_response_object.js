@@ -1,5 +1,6 @@
 var express = require('express'),
-	http = require('http');
+	http = require('http'),
+	fs = require('fs');
 
 var	 app = express();
 
@@ -8,6 +9,8 @@ app.configure(function() {
 	app.set('views', __dirname + "/views");
 	app.set("view engine", "jade");
 	app.use(express.bodyParser());
+	
+	app.use('/publice', express.static(__dirname + "/publice"));
 });
 
 
@@ -19,9 +22,9 @@ app.get('/sent-json', function(req, res) {
 	res.json({message: "something"});
 });
 
-app.get('/res-type', function(req, res) {
-	res.type('image/png').send('this is a picture');
-	//this is not work because after send has no bites, no picture it is plane texts
+app.get('/publice', function(req, res) {
+	var img = fs.readFileSync('./publice/ice_cream.png');
+	res.type('image/png').send(img);
 });
 
 
