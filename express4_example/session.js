@@ -1,29 +1,37 @@
 var express = require('express'),
-	http = require('http');
-	cookeiParser = require('cookie-parser');
+	http = require('http'),
+	bodyParser = require('body-parser'),
+	methodOverride = require('method-override'),
+	cookieParser = require('cookie-parser'),
+	// session = require('cookie-session');
+	session = require('express-session');
 
 var	 app = express();
 
 
-	app.set('port', process.env.POTR || 3000);
-	app.set('views', __dirname + "/views");
-	app.set("view engine", "jade");
-	
-	app.use(cookeiParser());
-	app.use(express.session({secret: 'this is a secter'}))
-	app.use(app.router);
-	app.use(app.static(__dirname + '/publice'));
+app.set('port', process.env.POTR || 3000);
+app.set('views', __dirname + "/views");
+app.set("view enginew", "jade");
 
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
+app.use(methodOverride());
+app.use(cookieParser());
+// app.use(express.session({secret: "This is a secret"}));
+app.use(session({
+  secret: "This is a secret",
+  secureProxy: true // if you do SSL outside of node
+}));
 
+// to set a session hit http://localhost:3000/name/sessionname
+// click on 'Go here' -  see the session
 app.get('/name/:name', function(req, res) {
-	req.session.name = req.arams.name;
+	req.session.name = req.params.name;
 	res.send('<p>To see the session in action, <a href="/name">Go here</a></p>');
 });
 
-// app.get('/name', function(req, res) {
-// 	res.send(req.cookies.name);
-// });
-
+// see the session
 app.get('/name', function(req, res) {
 	res.send(req.session.name);
 });
