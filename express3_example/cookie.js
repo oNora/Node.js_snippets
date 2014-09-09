@@ -8,22 +8,22 @@ app.configure(function() {
 	app.set('views', __dirname + "/views");
 	app.set("view engine", "jade");
 	
-	app.use(express.cookeiParser());
+	app.use(express.cookieParser());
 	app.use(app.router);
-	app.use(app.static(__dirname + '/publice'));
+	app.use(express.static(__dirname + '/publice'));
 
 });
 
+// to set cookiename hit http://localhost:3000/name/cookiename
+// when click on 'Go here' - unset cookie and see the cookiename
 app.get('/name/:name', function(req, res) {
 	res.cookie('name', req.params.name).send('<p>To see the cookie in action, <a href="/name">Go here</a></p>')
 });
 
-// app.get('/name', function(req, res) {
-// 	res.send(req.cookies.name);
-// });
 
+//unset cookie and see the cookiename
 app.get('/name', function(req, res) {
-	res.clearCookie('name').send(req.cookies.name);
+	res.clearCookie('name').send("cookies name: " + req.cookies.name);
 });
 
 http.createServer(app).listen(app.get('port'), function(){
