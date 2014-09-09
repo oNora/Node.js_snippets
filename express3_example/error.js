@@ -18,10 +18,6 @@ app.configure(function() {
 
 	//specific error message
 	app.use(function(err, req, res, next){
-		console.log("err.status");
-		console.log(err.status);
-		console.log("err.massage");
-		console.log(err.message);
 		res.status(err.status || 404);
 		res.send(err.message);
 	});
@@ -33,40 +29,39 @@ app.get('/', function (req, res) {
 
 
 //regualr error message
-// app.get('/users/:username', function(req, res, next) {
-// 	if(req.params.username === "andrew") {
-// 		next();
-// 	} else {
-// 		res.send(req.params.username + "'s profile");
-// 	}
-// });
-
-
-//specific error message
-// app.get('/users/:username', function(req, res, next) {
-// 	if(req.params.username === "andrew") {
-// 		var err = new Error('User does not exist');
-// 		err.status = 'user-error';
-// 		// err.massage = 'User does not exist';
-// 		next(err);
-// 	} else {
-// 		res.send(req.params.username + "'s profile");
-// 	}
-// });
-
-
-//second way to do the same thing
-app.param('username', function (req, res, next, username){
-	if(username !== "andrew"){
-		req.user = username;
+app.get('/toy/:toysname', function(req, res, next) {
+	if(req.params.toysname === "andrew") {
 		next();
 	} else {
-		next(new Error('no user found'));
+		res.send(req.params.toysname + "'s profile");
 	}
 });
 
+
+//specific error message
 app.get('/users/:username', function(req, res, next) {
-	res.send(req.user + "'s profile");
+	if(req.params.username === "andrew") {
+		var err = new Error('User does not exist');
+		next(err);
+	} else {
+		res.send(req.params.username + "'s profile");
+	}
+});
+
+
+//second way to do the same thing
+app.param('countryname', function (req, res, next, countryname){
+	if(countryname !==  'Atlantida'){
+		req.country = countryname;
+		next();
+	}else{
+		next(new Error('no country found'));
+	}
+});
+
+app.get('/country/:countryname', function (req, res, next){
+
+	res.send(req.country + "'s page");
 });
 
 
