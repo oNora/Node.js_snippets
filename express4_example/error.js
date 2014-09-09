@@ -27,8 +27,6 @@ app.get('/users/:username', function (req, res, next){
 
 		res.send(req.params.username +"'s profile");
 	}
-
-	res.send(req.user + "'s profile");
 });
 
 
