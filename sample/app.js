@@ -40,8 +40,6 @@ var saveAnswers = {
 };
 
 function nextQuestion(req, res){
-	console.log("body");
-	console.log(req.body);
 
 	var body = req.body;
 	var questionNumber = body.q_number;
@@ -56,22 +54,34 @@ function nextQuestion(req, res){
 
 	switch(qNumber) {
     case 2:
-        console.log('2 e');
         res.send(q2Text);
         break;
     case 3:
-        console.log('3 e');
         res.send(q3Text);
         break;
+    case 4:
+        res.send('no more questions');
+        break;
 	}
-
-	// res.send("ima psot");
-	console.log('saveAnswers');
+	console.log('saveAnswers in save');
 	console.log(saveAnswers);
 }
 
-	// console.log('saveAnswers');
-	// console.log(saveAnswers);
+function seeAnswers(req, res) {
+	console.log('saveAnswers in seeAnswers');
+	console.log(saveAnswers);
+	var results = {
+		q1Answers: saveAnswers.q1,
+		q1Currect: correctAnswer.q1,
+		q2Answers: saveAnswers.q2,
+		q2Currect: correctAnswer.q2,
+		q3Answers: saveAnswers.q3,
+		q4Currect: correctAnswer.q3
+	}
+	console.log('results predi send');
+	console.log(results);
+	res.send(results);
+}
 
 app.get(["/", '/index'], function(req, res) {
 	res.sendFile(__dirname + "/apps/veiws/index.html");
@@ -79,6 +89,7 @@ app.get(["/", '/index'], function(req, res) {
 
 
 app.post('/nextQuestion', nextQuestion);
+app.post('/seeAnswers', seeAnswers);
 
 // for static files in html
 app.use(/^(.+)$/, function(req, res){
