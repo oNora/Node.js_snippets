@@ -10,28 +10,29 @@ app.set('port', process.env.POTR || 3000);
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
-
 //db simulation
-// var q2Text = ['Which word doesn\'t fit?', 'pear', 'apple', 'stone'];
+// var q2Text = ['Coffee is to cup, what cake is to...', 'fork', 'napkin', 'plate'];
 var q2Text = {
-	question: 'Which word doesn\'t fit?',
-	questionNumber: '2',
-	a: 'pear',
-	b: 'apple',
-	c:'stone'
-};
-// var q3Text = ['Coffee is to cup, what cake is to...', 'fork', 'napkin', 'plate'];
-var q3Text = {
 	question: 'Coffee is to cup, what cake is to...',
-	questionNumber: '3',
+	questionNumber: '2',
 	a: 'fork',
 	b: 'napkin',
 	c:'plate'
 };
+
+// var q3Text = ['Which word doesn\'t fit?', 'pear', 'apple', 'stone'];
+var q3Text = {
+	question: 'Which word doesn\'t fit?',
+	questionNumber: '3',
+	a: 'pear',
+	b: 'apple',
+	c:'stone'
+};
+
 var correctAnswer = {
 	q1: 'television',
-	q2: 'stone',
-	q3: 'fork'
+	q2: 'fork',
+	q3: 'stone'
 }
 var saveAnswers = {
 	q1: '',
@@ -63,8 +64,6 @@ function nextQuestion(req, res){
         res.send('no more questions');
         break;
 	}
-	console.log('saveAnswers in save');
-	console.log(saveAnswers);
 }
 
 function seeAnswers(req, res) {
@@ -76,18 +75,20 @@ function seeAnswers(req, res) {
 		q2Answers: saveAnswers.q2,
 		q2Currect: correctAnswer.q2,
 		q3Answers: saveAnswers.q3,
-		q4Currect: correctAnswer.q3
+		q3Currect: correctAnswer.q3
 	}
-	console.log('results predi send');
-	console.log(results);
+
 	res.send(results);
 }
 
-app.get(["/", '/index'], function(req, res) {
+app.get('/', function(req, res) {
 	res.sendFile(__dirname + "/apps/veiws/index.html");
 });
 
-
+// app.get(["/404.html", '/404'],function(req, res) {
+app.get(["/404", '/404.html'], function(req, res) {
+	res.sendFile(__dirname + "/apps/veiws/404.html");
+});
 app.post('/nextQuestion', nextQuestion);
 app.post('/seeAnswers', seeAnswers);
 
@@ -95,12 +96,11 @@ app.post('/seeAnswers', seeAnswers);
 app.use(/^(.+)$/, function(req, res){
 	res.sendFile( __dirname + req.params[0]);
 });
-
 //send error if try to get no existing url
 app.use(function(err, req, res, next) {
-	res.status(404).send('four-oh-four');
+	// res.status(404).send('four-oh-four');
+	res.redirect('/404');
 });
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
 });
-

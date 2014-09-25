@@ -1,3 +1,27 @@
-.noMoreQuestions {
-	display: none;
-}
+*{padding:0;margin:0}
+body{font-family:'Love Ya Like A Sister',cursive}
+img{outline:none;border:0}
+.clearFix{clear:both;content:''}
+body > h1,body > p{text-align:center}
+form{width:600px;margin:20px auto;padding:20px;background:#eee;border-radius:5px}
+form > h3{text-align:center}
+form ul{float:left;margin:10px 0}
+form ul li{width:164px;float:left;list-style-type:lower-alpha;margin-left:36px; text-transform: capitalize;}
+form label{width:50px;float:left;margin:30px 10px}
+form label:first-of-type{margin:30px 0 30px 223px}
+form input[type="button"], input[name="result"]{width:300px;height:50px;margin:0 auto;display:block;border:none;background:#45D6BD;border-radius:10px;font-family: 'Love Ya Like A Sister',cursive;
+font-size: 22px;cursor:pointer;outline: none;}
+form input[type="button"]:hover, input[name="result"]:hover{background:#48C5B0;}
+.noMoreQuestions{display:none;width:600px;margin:20px auto;padding:20px;background:#eee;border-radius:5px}
+.noMoreQuestions p {margin:10px 0;text-align: center;}
+table{display:none;margin:30px auto;border-collapse:collapse;text-transform: capitalize;}
+table td,table th{border:1px solid #cbcbcb;padding:5px}
+table th{background:#7FFFD4}
+table td{background:#eee}
+
+
+/*----- 404 page style-----*/
+body.p404{background:#eaeaea}
+.wrap{margin:0 auto;width:476px}
+.logo p{color:#272727;font-size:40px;margin-top:1px}
+.sub a{color:#fff;background:#272727;text-decoration:none;padding:10px 20px;font-size:13px;font-family:arial,serif;font-weight:700;-webkit-border-radius:.5em}
