@@ -11,7 +11,13 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 //db simulation
-// var q2Text = ['Coffee is to cup, what cake is to...', 'fork', 'napkin', 'plate'];
+var q1Text = {
+	question: 'Which word doesn\'t fit?',
+	questionNumber: '1',
+	a: 'Seeing',
+	b: 'Hearing',
+	c:'Television'
+};
 var q2Text = {
 	question: 'Coffee is to cup, what cake is to...',
 	questionNumber: '2',
@@ -19,8 +25,6 @@ var q2Text = {
 	b: 'napkin',
 	c:'plate'
 };
-
-// var q3Text = ['Which word doesn\'t fit?', 'pear', 'apple', 'stone'];
 var q3Text = {
 	question: 'Which word doesn\'t fit?',
 	questionNumber: '3',
@@ -38,6 +42,10 @@ var saveAnswers = {
 	q1: '',
 	q2: '',
 	q3: ''
+};
+
+function loadQuestions(req, res){
+	res.send(q1Text);
 };
 
 function nextQuestion(req, res){
@@ -89,6 +97,8 @@ app.get('/', function(req, res) {
 app.get(["/404", '/404.html'], function(req, res) {
 	res.sendFile(__dirname + "/apps/veiws/404.html");
 });
+
+app.get('/loadQuestions', loadQuestions);
 app.post('/nextQuestion', nextQuestion);
 app.post('/seeAnswers', seeAnswers);
 

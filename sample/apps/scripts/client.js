@@ -1,13 +1,21 @@
 var clientjs;
 (function (clientjs, $) {
 
+	var questionsTemplate = $('#questionsTemplate').html();
+	var tmpQuestions = Handlebars.compile(questionsTemplate);
+
+	function loadQuestions(){
+		$.get('/loadQuestions').success(function (data) {
+
+			data.numberQ = 'q'+data.questionNumber;
+			$('form').html(tmpQuestions(data));
+
+		});
+	}
+
 	function nextQuestion(){
 		if($( "input:checked" ).length){
 			$.post('/nextQuestion', $('form').serialize()).done(function(data, error){
-				// console.log('data');
-				// console.log(data);
-				// console.log('error');
-				// console.log(error);
 
 				if (error == 'success') {
 					updateHtml(data);
@@ -18,17 +26,12 @@ var clientjs;
 
 	function updateHtml (dataHtml){
 		$('input[type="radio"]').attr('checked',false);
-		
-		if(dataHtml != 'no more questions'){
-			var numberQ = 'q'+dataHtml.questionNumber;
 
-			$('ul').html('<li>'+dataHtml.a+'</li><li>'+dataHtml.b+'</li><li>'+dataHtml.c+'</li>');
-			$('h3').html(dataHtml.question);
-			$('input[type="radio"]').attr('name', numberQ);
-			$('.answers_a').val(dataHtml.a);
-			$('.answers_b').val(dataHtml.b);
-			$('.answers_c').val(dataHtml.c);
-			$('input[type="hidden"]').val(dataHtml.questionNumber);
+		if(dataHtml != 'no more questions'){
+			dataHtml.numberQ = 'q'+dataHtml.questionNumber;
+
+			$('form').html(tmpQuestions(dataHtml));
+
 		}else{
 			$('form').hide();
 			$('h3').hide();
@@ -37,6 +40,8 @@ var clientjs;
 	}
 
 	function seeAnswers() {
+		console.log('$(form).serialize()');
+		console.log($('form').serialize());
 		$.post('/seeAnswers', $('form').serialize()).done(function(data, error){
 
 				if (error == 'success') {
@@ -59,7 +64,7 @@ var clientjs;
 		});
 	}
 
-
+	loadQuestions();
 
 	clientjs.nextQuestion = nextQuestion;
 	clientjs.seeAnswers = seeAnswers;
