@@ -8,8 +8,6 @@ var	 app = express();
 app.set('port', process.env.POTR || 3000);
 app.set('views', __dirname + "/views");
 app.set("view engine", "jade");
-// app.use(express.static(__dirname + '/publice'));
-app.use('/publice', express.static(__dirname + "/publice"));
 app.use(bodyParser.urlencoded({
 	extended: true
 }));
@@ -21,14 +19,6 @@ app.get('/404', function(req, res) {
 app.get('/json', function(req, res) {
 	res.json({massage: "something"});
 });
-
-app.get('/publice', function(req, res) {
-	
-	var img = fs.readFileSync('./publice/ice_cream.png');
-	res.type('image/png').send(img);
-
-});
-
 
 // sent deferent types of content dependes of headers for example
 // sent deferent types of content dependes of whot you wont
