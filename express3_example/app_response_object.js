@@ -9,8 +9,6 @@ app.configure(function() {
 	app.set('views', __dirname + "/views");
 	app.set("view engine", "jade");
 	app.use(express.bodyParser());
-	
-	app.use('/publice', express.static(__dirname + "/publice"));
 });
 
 
@@ -20,11 +18,6 @@ app.get('/404', function(req, res) {
 
 app.get('/sent-json', function(req, res) {
 	res.json({message: "something"});
-});
-
-app.get('/publice', function(req, res) {
-	var img = fs.readFileSync('./publice/ice_cream.png');
-	res.type('image/png').send(img);
 });
 
 
