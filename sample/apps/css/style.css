@@ -14,11 +14,20 @@ font-size: 22px;cursor:pointer;outline: none;}
 form input[type="button"]:hover, input[name="result"]:hover{background:#48C5B0;}
 .noMoreQuestions{display:none;width:600px;margin:20px auto;padding:20px;background:#eee;border-radius:5px}
 .noMoreQuestions p {margin:10px 0;text-align: center;}
-table{display:none;margin:30px auto;border-collapse:collapse;text-transform: capitalize;}
+table{/*display:none;*/ margin:30px auto;border-collapse:collapse;text-transform: capitalize;}
 table td,table th{border:1px solid #cbcbcb;padding:5px}
 table th{background:#7FFFD4}
-table td{background:#eee}
-
+table td{background:#eee; text-align: center;}
+table td div.wrong, table td div.currect{display: inline-block; padding-right: 20px;}
+table td div.wrong{background: url(../images/cancel-circle.png) right 2px no-repeat;}
+table td div.currect{background: url(../images/checkmark-circle.png) right 2px no-repeat;}
+/*----- error pop-up box-----*/
+.erorMsgBox{display: none; width: 600px; height: 200px; padding: 20px; position: absolute; top: 50%;left: 50%; margin-top: -120px; margin-left: -320px;z-index: 9; background: #D69999; border-radius: 5px;}
+.erorMsgBox	p{text-align: center;font-size: 40px;margin: 20px 0;}
+.erorMsgBox a{width:300px;height:50px;margin:55px auto 0;display:block;border:none;background:#45D6BD;border-radius:10px;font-family: 'Love Ya Like A Sister',cursive;
+font-size: 22px;line-height: 50px; outline: none; text-decoration: none;text-align: center; color: #000;}
+.erorMsgBox a:hover{background:#48C5B0;}
+.overlay{display: none; position: fixed;top: 0;height: 0;height: 100%;width: 100%; background: #FFE6E6; opacity: 0.8;}
 
 /*----- 404 page style-----*/
 body.p404{background:#eaeaea}

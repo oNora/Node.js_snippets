@@ -6,7 +6,6 @@
 		<meta charset="UTF-8" />
 		<script type="text/javascript" src="./apps/scripts/jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="./apps/scripts/handlebars-v1.3.0.js"></script>
-		<!-- <script type="text/javascript" src="./apps/scripts/client.js"></script> -->
 
 		<link href='http://fonts.googleapis.com/css?family=Love+Ya+Like+A+Sister' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="./apps/css/style.css" />
@@ -30,50 +29,62 @@
 			<input type="button" name="result" value="Result" onclick="clientjs.seeAnswers()">
 		</div>
 
-		<table  cellspacing="0" cellpadding="0">
-			<thead>
-				<tr>
-					<th>Questions</th>
-					<th>Your answers</th>
-					<th>Currect answers</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>
-						<div class="questins_1">Questtuon 1</div>
-					</td>
-					<td>
-						<div class="yourAnswers_1"><span></span></div>
-					</td>
-					<td>
-						<div class="currectAnswers_1"></div>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="questins_2">Questtuon 2</div>
-					</td>
-					<td>
-						<div class="yourAnswers_2"><span></span></div>
-					</td>
-					<td>
-						<div class="currectAnswers_2"></div>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<div class="questins_3">Questtuon 3</div>
-					</td>
-					<td>
-						<div class="yourAnswers_3"><span></span></div>
-					</td>
-					<td>
-						<div class="currectAnswers_3"></div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="tableWrap"></div>
+
+		<div class="erorMsgBox">
+			<p>Ooops, something goes wrong!</p>
+			<a href="/" title="">Try again!</a>
+		</div>
+
+		<div class="overlay"></div>
+
+		<script id="resultsTemplate" type="test/x-handlebars-template">
+			<table  cellspacing="0" cellpadding="0">
+				<thead>
+					<tr>
+						<th>Questions</th>
+						<th>Your answers</th>
+						<th>Currect answers</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<div class="questins_1">Questtuon 1</div>
+						</td>
+						<td>
+							<div class="yourAnswers_1">{{q1Answers}}</div>
+						</td>
+						<td>
+							<div class="currectAnswers_1">{{q1Currect}}</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="questins_2">Questtuon 2</div>
+						</td>
+						<td>
+							<div class="yourAnswers_2">{{q2Answers}}</div>
+						</td>
+						<td>
+							<div class="currectAnswers_2">{{q2Currect}}</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="questins_3">Questtuon 3</div>
+						</td>
+						<td>
+							<div class="yourAnswers_3">{{q3Answers}}</div>
+						</td>
+						<td>
+							<div class="currectAnswers_3">{{q3Currect}}</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</script>
+
 		<script id="questionsTemplate" type="test/x-handlebars-template">
 			<h3>{{question}}</h3>
 

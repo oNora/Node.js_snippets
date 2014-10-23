@@ -1,7 +1,6 @@
 var express = require('express'),
 	http = require('http'),
 	bodyParser = require('body-parser');
-	// var path = require('path');
 
 var	app = express(),
 	router = express.Router();
@@ -14,9 +13,9 @@ app.use(bodyParser.urlencoded({
 var q1Text = {
 	question: 'Which word doesn\'t fit?',
 	questionNumber: '1',
-	a: 'Seeing',
-	b: 'Hearing',
-	c:'Television'
+	a: 'seeing',
+	b: 'hearing',
+	c:'television'
 };
 var q2Text = {
 	question: 'Coffee is to cup, what cake is to...',
@@ -58,8 +57,6 @@ function nextQuestion(req, res){
 	saveAnswers[questionVersion] = body[questionVersion];
 
 	qNumber++;
-	// console.log('qNumber');
-	// console.log(qNumber);
 
 	switch(qNumber) {
     case 2:
@@ -75,8 +72,6 @@ function nextQuestion(req, res){
 }
 
 function seeAnswers(req, res) {
-	console.log('saveAnswers in seeAnswers');
-	console.log(saveAnswers);
 	var results = {
 		q1Answers: saveAnswers.q1,
 		q1Currect: correctAnswer.q1,
@@ -99,8 +94,9 @@ app.get(["/404", '/404.html'], function(req, res) {
 });
 
 app.get('/loadQuestions', loadQuestions);
+app.get('/seeAnswers', seeAnswers);
+
 app.post('/nextQuestion', nextQuestion);
-app.post('/seeAnswers', seeAnswers);
 
 // for static files in html
 app.use(/^(.+)$/, function(req, res){
@@ -108,7 +104,6 @@ app.use(/^(.+)$/, function(req, res){
 });
 //send error if try to get no existing url
 app.use(function(err, req, res, next) {
-	// res.status(404).send('four-oh-four');
 	res.redirect('/404');
 });
 http.createServer(app).listen(app.get('port'), function(){

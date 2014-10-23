@@ -4,23 +4,37 @@ var clientjs;
 	var questionsTemplate = $('#questionsTemplate').html();
 	var tmpQuestions = Handlebars.compile(questionsTemplate);
 
+	var resultsTemplate = $('#resultsTemplate').html();
+	var tmpResults = Handlebars.compile(resultsTemplate);
+
+	function showErrorMsg() {
+		$('.erorMsgBox').show();
+		$('.overlay').show();
+	}
+
 	function loadQuestions(){
-		$.get('/loadQuestions').success(function (data) {
+		$.get('/loadQuestions').success(function (data, error) {
 
-			data.numberQ = 'q'+data.questionNumber;
-			$('form').html(tmpQuestions(data));
-
+			if (error == 'success') {
+				data.numberQ = 'q'+data.questionNumber;
+				$('form').html(tmpQuestions(data));
+			} else {
+				showErrorMsg();
+			}
 		});
 	}
 
 	function nextQuestion(){
 		if($( "input:checked" ).length){
-			$.post('/nextQuestion', $('form').serialize()).done(function(data, error){
-
-				if (error == 'success') {
-					updateHtml(data);
+			$.post('/nextQuestion', $('form').serialize()).done(
+				function(data, error){
+					if (error == 'success') {
+						updateHtml(data);
+					} else {
+						showErrorMsg();
+					}
 				}
-			});
+			);
 		}
 	}
 
@@ -28,8 +42,8 @@ var clientjs;
 		$('input[type="radio"]').attr('checked',false);
 
 		if(dataHtml != 'no more questions'){
-			dataHtml.numberQ = 'q'+dataHtml.questionNumber;
 
+			dataHtml.numberQ = 'q'+dataHtml.questionNumber;
 			$('form').html(tmpQuestions(dataHtml));
 
 		}else{
@@ -40,26 +54,26 @@ var clientjs;
 	}
 
 	function seeAnswers() {
-		console.log('$(form).serialize()');
-		console.log($('form').serialize());
-		$.post('/seeAnswers', $('form').serialize()).done(function(data, error){
+
+		$.get('/seeAnswers').done(function(data, error){
 
 				if (error == 'success') {
-					$('.yourAnswers_1').append(data.q1Answers);
-					// $('.yourAnswers_1').append(data.q1Answers + '<span class="'+ (data.q1Answers == data.q1Currect? "currect":"wrong") +'"></span>');
-					$('.yourAnswers_1 span').addClass(data.q1Answers == data.q1Currect? "currect":"wrong");
-					$('.currectAnswers_1').html(data.q1Currect);
 
-					$('.yourAnswers_2').append(data.q2Answers);
-					$('.yourAnswers_2 span').addClass(data.q2Answers == data.q2Currect? "currect":"wrong");
-					$('.currectAnswers_2').html(data.q2Currect);
+					$('.tableWrap').html(tmpResults(data));
 
-					$('.yourAnswers_3').append(data.q3Answers);
-					$('.yourAnswers_3 span').addClass(data.q3Answers == data.q3Currect? "currect":"wrong");
-					$('.currectAnswers_3').html(data.q3Currect);
+					$('.yourAnswers_1').addClass(
+						data.q1Answers == data.q1Currect? "currect":"wrong"
+					);
+					$('.yourAnswers_2').addClass(
+						data.q2Answers == data.q2Currect? "currect":"wrong"
+					);
+					$('.yourAnswers_3').addClass(
+						data.q3Answers == data.q3Currect? "currect":"wrong"
+					);
 
-					$('table').show();
 					$('.noMoreQuestions').hide();
+				} else {
+					showErrorMsg();
 				}
 		});
 	}
