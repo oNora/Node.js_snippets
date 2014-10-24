@@ -59,15 +59,15 @@ function nextQuestion(req, res){
 	qNumber++;
 
 	switch(qNumber) {
-    case 2:
-        res.send(q2Text);
-        break;
-    case 3:
-        res.send(q3Text);
-        break;
-    case 4:
-        res.send('no more questions');
-        break;
+	case 2:
+		res.send(q2Text);
+		break;
+	case 3:
+		res.send(q3Text);
+		break;
+	case 4:
+		res.send('no more questions');
+		break;
 	}
 }
 

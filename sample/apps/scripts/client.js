@@ -57,24 +57,43 @@ var clientjs;
 
 		$.get('/seeAnswers').done(function(data, error){
 
-				if (error == 'success') {
+			if (error == 'success') {
 
-					$('.tableWrap').html(tmpResults(data));
+				var content = {
+					items: [
+						{
+							questtuon_text: "Questiuon 1",
+							given_answers: data.q1Answers,
+							right_answers: data.q1Currect
+						},
+						{
+							questtuon_text: "Questiuon 2",
+							given_answers: data.q2Answers,
+							right_answers: data.q2Currect
+						},
+						{
+							questtuon_text: "Questiuon 3",
+							given_answers: data.q3Answers,
+							right_answers: data.q3Currect
+						}
+					]
+				};
 
-					$('.yourAnswers_1').addClass(
-						data.q1Answers == data.q1Currect? "currect":"wrong"
-					);
-					$('.yourAnswers_2').addClass(
-						data.q2Answers == data.q2Currect? "currect":"wrong"
-					);
-					$('.yourAnswers_3').addClass(
-						data.q3Answers == data.q3Currect? "currect":"wrong"
-					);
+				Handlebars.registerHelper( "checkStatus", function (items){
+					if (this.given_answers == this.right_answers){
+						return 'currect';
+					}
+					else{
+						return 'wrong';
+					}
+				});
 
-					$('.noMoreQuestions').hide();
-				} else {
-					showErrorMsg();
-				}
+				$('.tableWrap').html(tmpResults(content));
+				$('.noMoreQuestions').hide();
+
+			} else {
+				showErrorMsg();
+			}
 		});
 	}
 

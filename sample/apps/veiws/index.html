@@ -48,39 +48,19 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<td>
-							<div class="questins_1">Questtuon 1</div>
-						</td>
-						<td>
-							<div class="yourAnswers_1">{{q1Answers}}</div>
-						</td>
-						<td>
-							<div class="currectAnswers_1">{{q1Currect}}</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div class="questins_2">Questtuon 2</div>
-						</td>
-						<td>
-							<div class="yourAnswers_2">{{q2Answers}}</div>
-						</td>
-						<td>
-							<div class="currectAnswers_2">{{q2Currect}}</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div class="questins_3">Questtuon 3</div>
-						</td>
-						<td>
-							<div class="yourAnswers_3">{{q3Answers}}</div>
-						</td>
-						<td>
-							<div class="currectAnswers_3">{{q3Currect}}</div>
-						</td>
-					</tr>
+					{{#each items}} {{!-- can write just items instead each items --}}
+						<tr>
+							<td>
+								<div>{{questtuon_text}}</div>
+							</td>
+							<td>
+								<div class="{{checkStatus items}}">{{given_answers}}</div>
+							</td>
+							<td>
+								<div>{{right_answers}}</div>
+							</td>
+						</tr>
+					{{/each}} {{!-- and here too --}}
 				</tbody>
 			</table>
 		</script>
