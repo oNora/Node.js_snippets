@@ -28,4 +28,4 @@ Basic functionality of express  version    4
 
 ### 4. `sample`
 
-Simulation of quiz. Greeting basic server and send information between serwer and client side. Using `handlebars.js` to update new info from server without refresh the page.
+Simulation of quiz. Creating basic server and send information between server and client side. Using `handlebars.js` to update new info from server without refreshing the page.
