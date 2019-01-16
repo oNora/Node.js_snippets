@@ -28,7 +28,7 @@ Basic functionality of express  version    4
 
 ### 4. `learning-node-master-class`
 
-collection of tasks created during the course [The Node.js Master Class](https://pirple.thinkific.com/courses/the-nodejs-master-class) .
+Collection of tasks created during the course [The Node.js Master Class](https://pirple.thinkific.com/courses/the-nodejs-master-class) .
 
 ### 5. `sample`
 
