@@ -26,6 +26,10 @@ Basic functionality of express  version    4
  - next function
  - session
 
-### 4. `sample`
+### 4. `learning-node-master-class`
+
+collection of tasks created during the course [The Node.js Master Class](https://pirple.thinkific.com/courses/the-nodejs-master-class) .
+
+### 5. `sample`
 
 Simulation of quiz. Creating basic server and send information between server and client side. Using `handlebars.js` to update new info from server without refreshing the page.
