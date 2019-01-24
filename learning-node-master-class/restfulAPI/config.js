@@ -1,5 +1,13 @@
 /*
  * Create and export configuration variables
+ * set env on windows CMD:
+ * ------------------------
+ * set NODE_ENV=staging
+ * and the run node index.js
+ *
+ * set env on linux based terminal :
+ * ------------------------
+ * NODE_ENV=staging node index.js
  */
 
 // Container for all environments
