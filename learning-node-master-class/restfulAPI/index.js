@@ -1,12 +1,40 @@
 // Dependencies
 const http = require('http');
+const https = require('https');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
+const fs = require('fs');
 
+// Initiate the Http server
 // The server should respond to all request with a string
-const server = http.createServer(function (req, res) {
+const serverHttp = http.createServer((req, res) => {
+    unifiedServer(req, res);
+});
 
+// Start the server
+serverHttp.listen(config.httpPrt, () => {
+    console.log(`The server is up and running now on port ${config.httpPort} in ${config.envName} mode`);
+});
+
+const ServerHttpSOptions = {
+    'key': fs.readFileSync('./https/key.pem'),
+    'cert': fs.readFileSync('./https/cert.pem')
+};
+
+// Initiate the HttpS server
+// The server should respond to all request with a string
+const serverHttpS = https.createServer(ServerHttpSOptions, (req, res) => {
+    unifiedServer(req, res);
+});
+
+// Start the server
+serverHttpS.listen(config.httpsPrt, () => {
+    console.log(`The server is up and running now on port ${config.httpsPort} in ${config.envName} mode`);
+});
+
+// All the server logic for both the http and https server
+const unifiedServer = function (req, res) {
     // Get the URL and parse it as an object with all date related to the URL
     const parsedUrl = url.parse(req.url, true);
 
@@ -72,14 +100,7 @@ const server = http.createServer(function (req, res) {
         // console.log(`Request received with these headers`, headers);
         // console.log('Request received with this payload: ', buffer);
     });
-
-
-});
-
-// Start the server
-server.listen(config.port, () => {
-    console.log(`The server is up and running now on port ${config.port} in ${config.envName} mode`);
-});
+}
 
 // Define all the handlers
 const handlers = {};
