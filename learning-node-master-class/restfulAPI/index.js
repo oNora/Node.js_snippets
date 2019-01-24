@@ -13,8 +13,8 @@ const serverHttp = http.createServer((req, res) => {
 });
 
 // Start the server
-serverHttp.listen(config.httpPrt, () => {
-    console.log(`The server is up and running now on port ${config.httpPort} in ${config.envName} mode`);
+serverHttp.listen(config.httpPort, () => {
+    console.log(`The HTTP server is up and running now on port ${config.httpPort} in ${config.envName} mode`);
 });
 
 const ServerHttpSOptions = {
@@ -29,8 +29,8 @@ const serverHttpS = https.createServer(ServerHttpSOptions, (req, res) => {
 });
 
 // Start the server
-serverHttpS.listen(config.httpsPrt, () => {
-    console.log(`The server is up and running now on port ${config.httpsPort} in ${config.envName} mode`);
+serverHttpS.listen(config.httpsPort, () => {
+    console.log(`The HTTPS server is up and running now on port ${config.httpsPort} in ${config.envName} mode`);
 });
 
 // All the server logic for both the http and https server
@@ -111,6 +111,10 @@ handlers.sample = (data, callback) => {
     callback(406, { 'name': 'sample handler' });
 };
 
+
+// Ping handler
+handlers.ping = (data, callback) => callback(200);
+
 // Not found handler
 handlers.notFound = (data, callback) => {
     callback(404);
@@ -118,5 +122,6 @@ handlers.notFound = (data, callback) => {
 
 // Define the request router
 const router = {
-    'sample': handlers.sample
+    'sample': handlers.sample,
+    'ping': handlers.ping
 };
