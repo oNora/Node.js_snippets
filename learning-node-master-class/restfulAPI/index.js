@@ -5,6 +5,7 @@ const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
 const fs = require('fs');
+const handlers = require('./lib/handlers');
 
 // Initiate the Http server
 // The server should respond to all request with a string
@@ -123,5 +124,6 @@ handlers.notFound = (data, callback) => {
 // Define the request router
 const router = {
     'sample': handlers.sample,
-    'ping': handlers.ping
+    'ping': handlers.ping,
+    'users': handlers.users
 };
