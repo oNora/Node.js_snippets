@@ -6,6 +6,7 @@ const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
 const fs = require('fs');
 const handlers = require('./lib/handlers');
+const helpers = require('./lib/helpers');
 
 // Initiate the Http server
 // The server should respond to all request with a string
@@ -70,7 +71,7 @@ const unifiedServer = function (req, res) {
             'queryStringObject': queryStringObject,
             'method': method,
             'headers': headers,
-            'payload': buffer
+            'payload': helpers.parseJsonToObject(buffer)
         };
 
         // Route the request to the handler specifies in the router
@@ -102,24 +103,6 @@ const unifiedServer = function (req, res) {
         // console.log('Request received with this payload: ', buffer);
     });
 }
-
-// Define all the handlers
-const handlers = {};
-
-// Sample handler
-handlers.sample = (data, callback) => {
-    // Callback a http status code and a payload object
-    callback(406, { 'name': 'sample handler' });
-};
-
-
-// Ping handler
-handlers.ping = (data, callback) => callback(200);
-
-// Not found handler
-handlers.notFound = (data, callback) => {
-    callback(404);
-};
 
 // Define the request router
 const router = {
