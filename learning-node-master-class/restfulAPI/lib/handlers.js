@@ -49,9 +49,9 @@ handlers._users.post = (data, callback) => {
 
     if (firstName && lastName && phone && password && tosAgreement) {
         /**
-           * Make sure the user doesn't already exist
-           * the phone number MUST be unique in order to create a new user
-           */
+         * Make sure the user doesn't already exist
+         * the phone number MUST be unique in order to create a new user
+         */
         _data.read('users', phone, (err, data) => {
             if (err) {
                 // Hash the password - not storing it as plain text
@@ -73,21 +73,29 @@ handlers._users.post = (data, callback) => {
                             callback(200);
                         } else {
                             console.log(err);
-                            callback(500, { 'Error': 'Could not create the new user' });
+                            callback(500, {
+                                'Error': 'Could not create the new user'
+                            });
                         }
                     });
                 } else {
-                    callback(500, { 'Error': 'Could not hash the user\'s password.' });
+                    callback(500, {
+                        'Error': 'Could not hash the user\'s password.'
+                    });
                 }
 
             } else {
                 // User alread exists
-                callback(400, { 'Error': 'A user with that phone number already exists' });
+                callback(400, {
+                    'Error': 'A user with that phone number already exists'
+                });
             }
         });
 
     } else {
-        callback(400, { 'Error': 'Missing required fields' });
+        callback(400, {
+            'Error': 'Missing required fields'
+        });
     }
 
 };
@@ -119,7 +127,9 @@ handlers._users.get = (data, callback) => {
             }
         });
     } else {
-        callback(400, { 'Error': 'Missing required field' })
+        callback(400, {
+            'Error': 'Missing required field'
+        })
     }
 
 };
@@ -170,18 +180,26 @@ handlers._users.put = (data, callback) => {
                             callback(200);
                         } else {
                             console.log(err);
-                            callback(500, { 'Error': 'Could not update the user.' });
+                            callback(500, {
+                                'Error': 'Could not update the user.'
+                            });
                         }
                     });
                 } else {
-                    callback(400, { 'Error': 'Specified user does not exist.' });
+                    callback(400, {
+                        'Error': 'Specified user does not exist.'
+                    });
                 }
             });
         } else {
-            callback(400, { 'Error': 'Missing fields to update.' });
+            callback(400, {
+                'Error': 'Missing fields to update.'
+            });
         }
     } else {
-        callback(400, { 'Error': 'Missing required field.' });
+        callback(400, {
+            'Error': 'Missing required field.'
+        });
     }
 };
 
@@ -203,22 +221,30 @@ handlers._users.delete = (data, callback) => {
                     if (!err) {
                         callback(200);
                     } else {
-                        callback(500, { 'Error': 'Could not delete the specified user' });
+                        callback(500, {
+                            'Error': 'Could not delete the specified user'
+                        });
                     }
                 });
             } else {
-                callback(400, { 'Error': 'Could not find the specified user.' });
+                callback(400, {
+                    'Error': 'Could not find the specified user.'
+                });
             }
         });
     } else {
-        callback(400, { 'Error': 'Missing required field' })
+        callback(400, {
+            'Error': 'Missing required field'
+        })
     }
 };
 
 // Sample handler
 handlers.sample = (data, callback) => {
     // Callback a http status code and a payload object
-    callback(406, { 'name': 'sample handler' });
+    callback(406, {
+        'name': 'sample handler'
+    });
 };
 
 
