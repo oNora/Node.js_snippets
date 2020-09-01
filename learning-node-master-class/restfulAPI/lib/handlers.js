@@ -106,24 +106,39 @@ handlers._users.post = (data, callback) => {
  * Required data: phone
  * Optional data: none
  *
- * How to test it? Make a get request with existing phone numbers:
+ * How to test it? Make a get request with existing phone numbers and add a token (must be created first) in a heder of the request:
  * localhost:3000/users?phone=5551234568
  *
- * @TODO Only let an authenticated user access their object. Dont let them access anyone elses.
+
  */
 handlers._users.get = (data, callback) => {
 
     // Check that phone number is valid
     const phone = typeof (data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
     if (phone) {
-        // Lookup the user
-        _data.read('users', phone, (err, dataR) => {
-            if (!err && dataR) {
-                // Remove the hashed password from the user user object before returning it to the requester
-                delete dataR.hashedPassword;
-                callback(200, dataR);
+
+        // Get token from headers
+        const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+
+        // Verify that the given token is valid for the phone number
+        handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {
+            if (tokenIsValid) {
+                // Lookup the user
+
+                // Lookup the user
+                _data.read('users', phone, (err, dataR) => {
+                    if (!err && dataR) {
+                        // Remove the hashed password from the user user object before returning it to the requester
+                        delete dataR.hashedPassword;
+                        callback(200, dataR);
+                    } else {
+                        callback(404);
+                    }
+                });
             } else {
-                callback(404);
+                callback(403, {
+                    "Error": "Missing required token in header, or token is invalid."
+                })
             }
         });
     } else {
@@ -140,13 +155,12 @@ handlers._users.get = (data, callback) => {
  * Optional data: firstName, lastName, password (at least one must be specified)
  *
  * How to test it? Make a put request (postman) with object similar to the following
- * with requeued field and at lest one optional whit updated data:
+ * with requeued field and at lest one optional whit updated data and add a token (must be created first) in a heder of the request :
  * {
  *  "firstName":"John 2",
  *  "phone":"5551234568",
  *  }
  *
- * @TODO TODO Only let an authenticated user up their object. Dont let them access update elses.
  */
 handlers._users.put = (data, callback) => {
     // Check for required field
@@ -161,36 +175,51 @@ handlers._users.put = (data, callback) => {
     if (phone) {
         // Error if nothing is sent to update
         if (firstName || lastName || password) {
-            // Lookup the user
-            _data.read('users', phone, (err, userData) => {
-                if (!err && userData) {
-                    // Update the fields if necessary
-                    if (firstName) {
-                        userData.firstName = firstName;
-                    }
-                    if (lastName) {
-                        userData.lastName = lastName;
-                    }
-                    if (password) {
-                        userData.hashedPassword = helpers.hash(password);
-                    }
-                    // Store the new updates
-                    _data.update('users', phone, userData, (err) => {
-                        if (!err) {
-                            callback(200);
+
+            // Get token from headers
+            const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+
+            // Verify that the given token is valid for the phone number
+            handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {
+                if (tokenIsValid) {
+                    // Lookup the user
+                    _data.read('users', phone, (err, userData) => {
+                        if (!err && userData) {
+                            // Update the fields if necessary
+                            if (firstName) {
+                                userData.firstName = firstName;
+                            }
+                            if (lastName) {
+                                userData.lastName = lastName;
+                            }
+                            if (password) {
+                                userData.hashedPassword = helpers.hash(password);
+                            }
+                            // Store the new updates
+                            _data.update('users', phone, userData, (err) => {
+                                if (!err) {
+                                    callback(200);
+                                } else {
+                                    console.log(err);
+                                    callback(500, {
+                                        'Error': 'Could not update the user.'
+                                    });
+                                }
+                            });
                         } else {
-                            console.log(err);
-                            callback(500, {
-                                'Error': 'Could not update the user.'
+                            callback(400, {
+                                'Error': 'Specified user does not exist.'
                             });
                         }
                     });
                 } else {
-                    callback(400, {
-                        'Error': 'Specified user does not exist.'
-                    });
+                    callback(403, {
+                        "Error": "Missing required token in header, or token is invalid."
+                    })
                 }
             });
+
+
         } else {
             callback(400, {
                 'Error': 'Missing fields to update.'
@@ -206,32 +235,50 @@ handlers._users.put = (data, callback) => {
 /**
  * Users - delete
  * Required data: phone
- * @TODO Only let an authenticated user delete their object. Dont let them delete update elses.
+ *
+ * When make a DELETE request add a token (must be created first) in a heder of the request.
+ *
  * @TODO Cleanup (delete) any other data files associated with the user
+ *
  */
 handlers._users.delete = (data, callback) => {
     // Check that phone number is valid
     const phone = typeof (data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
 
     if (phone) {
-        // Lookup the user
-        _data.read('users', phone, (err, data) => {
-            if (!err && data) {
-                _data.delete('users', phone, (err) => {
-                    if (!err) {
-                        callback(200);
+        // Get token from headers
+        const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+
+        // Verify that the given token is valid for the phone number
+        handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {
+            if (tokenIsValid) {
+
+                // Lookup the user
+                _data.read('users', phone, (err, data) => {
+                    if (!err && data) {
+                        _data.delete('users', phone, (err) => {
+                            if (!err) {
+                                callback(200);
+                            } else {
+                                callback(500, {
+                                    'Error': 'Could not delete the specified user'
+                                });
+                            }
+                        });
                     } else {
-                        callback(500, {
-                            'Error': 'Could not delete the specified user'
+                        callback(400, {
+                            'Error': 'Could not find the specified user.'
                         });
                     }
                 });
             } else {
-                callback(400, {
-                    'Error': 'Could not find the specified user.'
-                });
+                callback(403, {
+                    "Error": "Missing required token in header, or token is invalid."
+                })
             }
         });
+
+
     } else {
         callback(400, {
             'Error': 'Missing required field'
@@ -439,6 +486,23 @@ handlers._tokens.delete = (data, callback) => {
             'Error': 'Missing required field'
         })
     }
+};
+
+// Verify if a given token id is currently valid for a given user
+handlers._tokens.verifyToken = (id, phone, callback) => {
+    // Lookup the token
+    _data.read('tokens', id, (err, tokenData) => {
+        if (!err && tokenData) {
+            // Check that the token is for the given user and has not expired
+            if (tokenData.phone == phone && tokenData.expires > Date.now()) {
+                callback(true);
+            } else {
+                callback(false);
+            }
+        } else {
+            callback(false);
+        }
+    });
 };
 
 // Ping handler
