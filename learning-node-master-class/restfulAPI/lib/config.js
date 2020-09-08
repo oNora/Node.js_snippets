@@ -14,12 +14,18 @@
 const environments = {};
 
 // Staging (default) environment
+// the twilio acounds is my not from the course
 environments.staging = {
     'httpPort': 3000,
     'httpsPort': 3001,
     'envName': 'staging',
     'hashingSecret': 'thisIsASecret',
-    'maxChecks': 5
+    'maxChecks': 5,
+    'twilio': {
+        'accountSid': 'ACc5aa9652df019946738fc3b66cc0f9d2',
+        'authToken': 'f026fcafd62bcc3ddccea0fbda3e1d33',
+        'fromPhone': '+12078433109'
+    }
 };
 
 // Production environment
@@ -28,7 +34,12 @@ environments.production = {
     'httpsPort': 5001,
     'envName': 'production',
     'hashingSecret': 'thisIsAlsoASecret',
-    'maxChecks': 5
+    'maxChecks': 5,
+    'twilio': {
+        'accountSid': '',
+        'authToken': '',
+        'fromPhone': ''
+    }
 };
 
 // Determine which environment was passed as a command-line argument

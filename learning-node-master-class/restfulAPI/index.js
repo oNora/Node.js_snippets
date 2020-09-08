@@ -8,6 +8,12 @@ const fs = require('fs');
 const handlers = require('./lib/handlers');
 const helpers = require('./lib/helpers');
 
+// use this only for quick test sending sms
+// helpers.sendTwilioSms('4158375309', 'HAllo', (err) => {
+//     console.log('this was the error', err);
+// });
+
+
 // Initiate the Http server
 // The server should respond to all request with a string
 const serverHttp = http.createServer((req, res) => {
