@@ -14,7 +14,7 @@ const url = require('url');
 const _logs = require('./logs');
 const util = require('util');
 // will use it to see in console messages only from here when start the app with this command:
-// NODE_DEBUG = workers node index.js
+// NODE_DEBUG=workers node index.js
 // NB!!! for windows use this: SET NODE_DEBUG=workers&&node index.js
 const debug = util.debuglog('workers');
 
