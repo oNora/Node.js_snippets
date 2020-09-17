@@ -12,6 +12,12 @@ const fs = require('fs');
 const handlers = require('./handlers');
 const helpers = require('./helpers');
 const path = require('path');
+const util = require('util');
+// will use it to see in console messages only from here when start the app with this command:
+// NODE_DEBUG = workers node index.js
+// NB!!! for windows use this: SET NODE_DEBUG=workers&&node index.js
+const debug = util.debuglog('server');
+
 
 // use this only for quick test sending sms
 // helpers.sendTwilioSms('4158375309', 'HAllo', (err) => {
@@ -96,7 +102,13 @@ server.unifiedServer = function (req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(statusCode);
             res.end(payloadString);
-            console.log("Returning this response: ", statusCode, payloadString);
+            // console.log("Returning this response: ", statusCode, payloadString);
+            // If the response is 200, print green, otherwise print red
+            if (statusCode == 200) {
+                debug('\x1b[32m%s\x1b[0m', `Returning this response with method:${method.toUpperCase()}  trimmedPath: /${trimmedPath} statusCode:${statusCode} `);
+            } else {
+                debug('\x1b[31m%s\x1b[0m', `Returning this response with method:${method.toUpperCase()}  trimmedPath: /${trimmedPath} statusCode:${statusCode} `);
+            }
 
         });
 
@@ -123,12 +135,12 @@ server.init = () => {
 
     // Start the HTTP server
     server.serverHttp.listen(config.httpPort, () => {
-        console.log(`The HTTP server is up and running now on port ${config.httpPort} in ${config.envName} mode`);
+        console.log('\x1b[36m%s\x1b[0m', `The HTTP server is up and running now on port ${config.httpPort} in ${config.envName} mode`);
     });
 
     // Start the HTTPS server
     server.serverHttpS.listen(config.httpsPort, () => {
-        console.log(`The HTTPS server is up and running now on port ${config.httpsPort} in ${config.envName} mode`);
+        console.log('\x1b[35m%s\x1b[0m', `The HTTPS server is up and running now on port ${config.httpsPort} in ${config.envName} mode`);
     });
 
 }
