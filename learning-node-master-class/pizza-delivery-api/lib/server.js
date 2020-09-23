@@ -110,6 +110,7 @@ server.unifiedServer = function (req, res) {
 server.router = {
     'test': handlers.test,
     'users': handlers.users,
+    'tokens': handlers.tokens,
 };
 
 server.init = () => {
