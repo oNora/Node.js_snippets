@@ -356,7 +356,7 @@ handlers._tokens.verifyToken = (id, phone, callback) => {
  *  }
  */
 handlers._tokens.post = (data, callback) => {
-    console.log('tuk');
+
     const phone = typeof (data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
     const password = typeof (data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false;
 
@@ -673,7 +673,7 @@ handlers._menu = {};
 
 
 /**
- * Menus - post
+ * Menus - get
  * Required data: user's phone
  * Optional data: none
  *
@@ -715,6 +715,66 @@ handlers._menu.get = (data, callback) => {
     }
 
 };
+
+// shopping card
+handlers.shoppingCard = (data, callback) => {
+    let goodMethods = ['post'];
+    if (goodMethods.indexOf(data.method) > -1) {
+        handlers._shoppingCard[data.method](data, callback);
+    } else {
+        callback(405);
+    }
+};
+
+// Container for all the shopping card methods
+handlers._shoppingCard = {};
+
+/**
+ * Shopping Card - post
+ * Required data: user's phone and at least one menu item
+ * Optional data: none
+ *
+ * How to test it?
+ * Create a POST request with the following params and at least one menu item:
+ * {
+ *  "userPhone": "palleeb7tohvptnl611r",
+ *   "meniItems": [
+ *        {
+ *            "id": 3,
+ *            "itemName": "Vegan",
+ *            "quantity" : 2,
+ *            "single_price": 12.99
+ *        }
+ *    ]}
+ */
+handlers._shoppingCard.post = (data, callback) => {
+    console.log('data paylod: ', data.payload);
+    const phone = typeof (data.payload.userPhone) == 'string' && data.payload.userPhone.trim().length == 10 ? data.payload.userPhone.trim() : false;
+    const meniItems = data.payload.meniItems.constructor === Array && data.payload.meniItems.length > 0 ? data.payload.meniItems : false;
+
+    if (phone && meniItems) {
+
+        // Get token from headers
+        const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+
+        // Verify that the given token is valid for the phone number
+        handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {
+            if (tokenValid) {
+                // TODO: put logic here
+                callback(200);
+            } else {
+                callback(400, {
+                    'Error': 'Missing required token in the headers, or the token is invalid.'
+                });
+            }
+        });
+
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+}
 
 // Export the handlers
 module.exports = handlers;

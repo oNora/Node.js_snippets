@@ -112,6 +112,7 @@ server.router = {
     'users': handlers.users,
     'tokens': handlers.tokens,
     'menu': handlers.menu,
+    'shoppingCard': handlers.shoppingCard,
 };
 
 server.init = () => {
