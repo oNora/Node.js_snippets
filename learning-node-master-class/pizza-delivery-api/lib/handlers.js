@@ -658,5 +658,63 @@ handlers._tokens.delete = (data, callback) => {
 };
 
 
+// menu
+handlers.menu = (data, callback) => {
+    let goodMethods = ['get'];
+    if (goodMethods.indexOf(data.method) > -1) {
+        handlers._menu[data.method](data, callback);
+    } else {
+        callback(405);
+    }
+};
+
+// Container for all the menu methods
+handlers._menu = {};
+
+
+/**
+ * Menus - post
+ * Required data: user's phone
+ * Optional data: none
+ *
+ * How to test it?
+ * Create an user and token fot this user. Make a GET request whit user's phone as param and the token in the headers
+ */
+handlers._menu.get = (data, callback) => {
+
+    // Check that phone number is valid
+    const phone = typeof (data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
+    if (phone) {
+
+        // Get token from headers
+        const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+
+        // Verify that the given token is valid for the phone number
+        handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {
+            if (tokenIsValid) {
+
+                // Lookup the menu
+                _data.read('menuItems', 'menu', (err, dataMenu) => {
+                    if (!err && dataMenu) {
+                        console.log("dataMenu", dataMenu);
+                        callback(200, dataMenu);
+                    } else {
+                        callback(404);
+                    }
+                });
+            } else {
+                callback(403, {
+                    "Error": "Missing required token in header, or token is invalid."
+                })
+            }
+        });
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+
+};
+
 // Export the handlers
 module.exports = handlers;

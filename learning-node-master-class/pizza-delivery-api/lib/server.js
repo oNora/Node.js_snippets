@@ -111,6 +111,7 @@ server.router = {
     'test': handlers.test,
     'users': handlers.users,
     'tokens': handlers.tokens,
+    'menu': handlers.menu,
 };
 
 server.init = () => {
