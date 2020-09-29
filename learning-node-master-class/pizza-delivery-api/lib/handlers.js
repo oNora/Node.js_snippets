@@ -718,7 +718,7 @@ handlers._menu.get = (data, callback) => {
 
 // shopping card
 handlers.shoppingCard = (data, callback) => {
-    let goodMethods = ['post'];
+    let goodMethods = ['post', 'get', 'put', 'delete'];
     if (goodMethods.indexOf(data.method) > -1) {
         handlers._shoppingCard[data.method](data, callback);
     } else {
@@ -814,6 +814,195 @@ handlers._shoppingCard.post = (data, callback) => {
         })
     }
 }
+
+/**
+ * Shopping Card - get
+ * Required data: phone
+ * Optional data: none
+ *
+ * How to test it? Make a get request with existing order numbers & user phone and add a token (must be created first) in a heder of the request:
+ * localhost:3000/shoppingCard?orderId=3b25804f9o&phone=5551234568
+ *
+ */
+handlers._shoppingCard.get = (data, callback) => {
+
+    // Check that phone number and order id are valid
+    const orderId = typeof (data.queryStringObject.orderId) == 'string' && data.queryStringObject.orderId.trim().length == 10 ? data.queryStringObject.orderId.trim() : false;
+    const phone = typeof (data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
+
+    if (orderId && phone) {
+
+        // Get token from headers
+        const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+
+        // Verify that the given token is valid for the phone number
+        handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {
+            if (tokenIsValid) {
+
+                // Lookup the order
+                _data.read('orders', orderId, (err, dataOrder) => {
+                    if (!err && dataOrder) {
+                        callback(200, dataOrder);
+                    } else {
+                        callback(404);
+                    }
+                });
+            } else {
+                callback(403, {
+                    "Error": "Missing required token in header, or token is invalid."
+                })
+            }
+        });
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+
+};
+
+/**
+ * Shopping Card - put
+ * Required data: phone, orderId, menuItems
+ * Optional data: firstName, lastName, password (at least one must be specified)
+ *
+ * How to test it?
+ * Create a PUT request with the following params and at least one menu item and add a token (must be created first) in a heder of the request:
+ * {
+ *  "phone": "8q14kyby83",
+ *   "menuItems": [
+ *        {
+ *            "id": 3,
+ *            "itemName": "Vegan",
+ *            "quantity" : 2,
+ *            "singlePrice": 12.99
+ *        }
+ *    ]}
+ *
+ */
+handlers._shoppingCard.put = (data, callback) => {
+
+    const phone = typeof (data.payload.userPhone) == 'string' && data.payload.userPhone.trim().length == 10 ? data.payload.userPhone.trim() : false;
+    const orderId = typeof (data.payload.orderId) == 'string' && data.payload.orderId.trim().length == 10 ? data.payload.orderId.trim() : false;
+    const menuItems = data.payload.menuItems.constructor === Array && data.payload.menuItems.length > 0 ? data.payload.menuItems : false;
+
+    if (phone && menuItems && orderId) {
+
+        // Get token from headers
+        const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+
+        // Verify that the given token is valid for the phone number
+        handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {
+            if (tokenIsValid) {
+
+                const cartData = {}
+
+                // Lookup the user
+                _data.read('users', phone, (err, dataUser) => {
+                    if (!err && dataUser) {
+
+                        cartData.userPhone = phone;
+                        cartData.userEmail = dataUser.email;
+
+                        let orderTotalPrice = 0;
+                        for (let i = 0; i < menuItems.length; i++) {
+                            menuItems[i].totalItemPrice = menuItems[i].quantity * menuItems[i].singlePrice;
+                            orderTotalPrice += menuItems[i].totalItemPrice;
+                        }
+
+                        cartData.menuItems = menuItems;
+                        cartData.orderTotalPrice = orderTotalPrice;
+
+                        // Update the order
+                        _data.update('orders', orderId, cartData, (err) => {
+                            console.log('err: ', err);
+                            if (!err) {
+                                callback(200, cartData);
+                            } else {
+                                console.log(err);
+                                callback(500, {
+                                    'Error': 'Could not UPDATE the order'
+                                });
+                            }
+                        });
+
+
+                    } else {
+                        callback(404);
+                    }
+                });
+
+
+
+            } else {
+                callback(400, {
+                    'Error': 'Missing required token in the headers, or the token is invalid.'
+                });
+            }
+        });
+
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+};
+
+/**
+ * Shopping Card delete
+ * Required data : orderId, userPhone
+ * Optional data:  none
+ *
+ * How to test it?
+ * Make a DELETE request with an id of existing order id and user phone.
+ */
+handlers._shoppingCard.delete = (data, callback) => {
+
+    // Check that phone number and order id are valid
+    const orderId = typeof (data.queryStringObject.orderId) == 'string' && data.queryStringObject.orderId.trim().length == 10 ? data.queryStringObject.orderId.trim() : false;
+    const phone = typeof (data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length == 10 ? data.queryStringObject.phone.trim() : false;
+
+    if (phone && orderId) {
+        // Get token from headers
+        const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+
+        // Verify that the given token is valid for the phone number
+        handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {
+            if (tokenIsValid) {
+
+                _data.read('users', phone, (err, userData) => {
+                    if (!err && userData) {
+                        _data.delete('orders', orderId, (err) => {
+                            if (!err) {
+                                callback(200, {
+                                    'Success': 'The order has been deleted successfully'
+                                });
+                            } else {
+                                callback(500, {
+                                    'Error': 'Could not delete the selected order.'
+                                });
+                            }
+                        });
+                    } else {
+                        callback(400, {
+                            'Error': 'Could not find the selected customer.'
+                        });
+                    }
+                });
+            } else {
+                callback(403, {
+                    "Error": "Missing required token in header, or token is invalid."
+                })
+            }
+        });
+
+
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+};
 
 // Export the handlers
 module.exports = handlers;
