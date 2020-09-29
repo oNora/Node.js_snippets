@@ -738,30 +738,69 @@ handlers._shoppingCard = {};
  * Create a POST request with the following params and at least one menu item:
  * {
  *  "userPhone": "palleeb7tohvptnl611r",
- *   "meniItems": [
+ *   "menuItems": [
  *        {
  *            "id": 3,
  *            "itemName": "Vegan",
  *            "quantity" : 2,
- *            "single_price": 12.99
+ *            "singlePrice": 12.99
  *        }
  *    ]}
  */
 handlers._shoppingCard.post = (data, callback) => {
-    console.log('data paylod: ', data.payload);
+    // console.log('data paylod: ', data.payload);
     const phone = typeof (data.payload.userPhone) == 'string' && data.payload.userPhone.trim().length == 10 ? data.payload.userPhone.trim() : false;
-    const meniItems = data.payload.meniItems.constructor === Array && data.payload.meniItems.length > 0 ? data.payload.meniItems : false;
+    const menuItems = data.payload.menuItems.constructor === Array && data.payload.menuItems.length > 0 ? data.payload.menuItems : false;
 
-    if (phone && meniItems) {
+    if (phone && menuItems) {
 
         // Get token from headers
         const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
 
         // Verify that the given token is valid for the phone number
         handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {
-            if (tokenValid) {
-                // TODO: put logic here
-                callback(200);
+            if (tokenIsValid) {
+
+                const cartData = {}
+
+                // Lookup the user
+                _data.read('users', phone, (err, dataUser) => {
+                    if (!err && dataUser) {
+
+                        const orderId = helpers.createRandomString(10);
+                        cartData.orderId = orderId;
+                        cartData.userPhone = phone;
+                        cartData.userEmail = dataUser.email;
+
+                        let orderTotalPrice = 0;
+                        for (let i = 0; i < menuItems.length; i++) {
+                            menuItems[i].totalItemPrice = menuItems[i].quantity * menuItems[i].singlePrice;
+                            orderTotalPrice += menuItems[i].totalItemPrice;
+                        }
+
+                        cartData.menuItems = menuItems;
+                        cartData.orderTotalPrice = orderTotalPrice;
+
+                        // Store the order
+                        _data.create('orders', orderId, cartData, (err) => {
+                            if (!err) {
+                                callback(200, cartData);
+                            } else {
+                                console.log(err);
+                                callback(500, {
+                                    'Error': 'Could not create the new user'
+                                });
+                            }
+                        });
+
+
+                    } else {
+                        callback(404);
+                    }
+                });
+
+
+
             } else {
                 callback(400, {
                     'Error': 'Missing required token in the headers, or the token is invalid.'
