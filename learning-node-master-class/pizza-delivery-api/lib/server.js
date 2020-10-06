@@ -113,6 +113,7 @@ server.router = {
     'tokens': handlers.tokens,
     'menu': handlers.menu,
     'shoppingCard': handlers.shoppingCard,
+    'payment': handlers.payment,
 };
 
 server.init = () => {

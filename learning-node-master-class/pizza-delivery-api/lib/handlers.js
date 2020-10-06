@@ -1004,5 +1004,108 @@ handlers._shoppingCard.delete = (data, callback) => {
     }
 };
 
+// payment.
+handlers.payment = (data, callback) => {
+    let goodMethods = ['post'];
+    if (goodMethods.indexOf(data.method) > -1) {
+        handlers._payment[data.method](data, callback);
+    } else {
+        callback(405);
+    }
+};
+
+// Container for all the payment methods
+handlers._payment = {};
+
+
+/**
+ * payment post
+ * Required data : orderId, userPhone, cardNumber, cardExpiryDate, cardHolder, cardCVVCode
+ * Optional data:  none
+ *
+ * How it si work?
+ * Make a POST request with following data and make sure have a valid token:
+ *
+ * {
+ * "orderId":"8q14kyby83",
+ * "userPhone": "5551234568",
+ * "cardNumber": "4242424242424242",
+ * "cardExpiryDate": "07.07.2022",
+ * "cardHolder": "John Smit",
+ * "cardCVVCode": "545"
+ * }
+ */
+
+handlers._payment.post = (data, callback) => {
+
+    // Check that phone number and order id are valid
+    const orderId = typeof data.payload.orderId == 'string' && data.payload.orderId.trim().length == 10 ? data.payload.orderId.trim() : false;
+    const userPhone = typeof data.payload.userPhone == 'string' && data.payload.userPhone.trim().length == 10 ? data.payload.userPhone.trim() : false;
+    // payment information
+    const cardNumber = typeof data.payload.cardNumber == 'string' && data.payload.cardNumber.trim().length === 16 ? data.payload.cardNumber.trim() : false;
+    const cardExpiryDate = typeof data.payload.cardExpiryDate == 'string' && data.payload.cardExpiryDate.trim().length > 0 ? data.payload.cardExpiryDate.trim() : false;
+    const cardHolder = typeof data.payload.cardHolder == 'string' && data.payload.cardHolder.trim().length > 0 ? data.payload.cardHolder.trim() : false;
+    const cardCVVCode = typeof data.payload.cardCVVCode == 'string' && data.payload.cardCVVCode.trim().length === 3 ? data.payload.cardCVVCode.trim() : false;
+
+    if (userPhone && orderId && cardNumber && cardExpiryDate && cardHolder && cardCVVCode) {
+        // Get token from headers
+        const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+
+        // Verify that the given token is valid for the phone number
+        handlers._tokens.verifyToken(token, userPhone, (tokenIsValid) => {
+            if (tokenIsValid) {
+                _data.read('orders', orderId, (err, orderData) => {
+
+                    if (!err && orderData) {
+                        let orderInfo = {
+                            id: orderId,
+                            userEmail: orderData.userEmail,
+                            totalAmount: orderData.totalAmount
+                        };
+
+                        helpers.proceedPayment(orderData.orderTotalPrice, (err) => {
+                            if (!err) {
+
+                                helpers.sendEmail(orderData.userEmail, orderData.orderTotalPrice, (err) => {
+
+                                    if (err) {
+                                        orderInfo = {
+                                            Message: 'Order completed successfully but couldn\'t send confirmation email'
+                                        };
+                                    } else {
+                                        orderInfo = {
+                                            Message: 'Order completed successfully! Thank you for your order!'
+                                        };
+                                    }
+
+                                    callback(200, orderInfo);
+                                });
+
+                            } else {
+                                callback(400, {
+                                    Error: "Could not proceed payment"
+                                });
+                            }
+                        });
+                    } else {
+                        callback(400, {
+                            Error: 'Could not get shopping cart'
+                        });
+                    }
+                });
+
+            } else {
+                callback(403, {
+                    "Error": "Missing required token in header, or token is invalid."
+                })
+            }
+        });
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+};
+
 // Export the handlers
 module.exports = handlers;
