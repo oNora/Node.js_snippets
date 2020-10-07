@@ -21,11 +21,11 @@ environments.staging = {
     'envName': 'staging',
     'hashingSecret': 'thisIsASecret',
     'stripe': {
-        'apiKey': 'sk_test_51HX3QFGKNeXdBGg1tjTL0538368oJ58vaQbNyw97Ui79w8LY7r3sn1eMAAkdtocz2OdCYQob42WYCLnRSHO3tHJn00m1X3TEwa',
+        'apiKey': '',
     },
     'mailgun': {
         'accountId': 'sandbox5a7d08475c1b4c0b80007da21b5e67a7',
-        'apiKey': '523fb3f7fa69c8564c9a9f6ad09fad90-0d2e38f7-a62fa648'
+        'apiKey': ''
     }
 };
 
@@ -36,11 +36,11 @@ environments.production = {
     'envName': 'production',
     'hashingSecret': 'thisIsAlsoASecret',
     'stripe': {
-        'apiKey': 'sk_test_51HX3QFGKNeXdBGg1tjTL0538368oJ58vaQbNyw97Ui79w8LY7r3sn1eMAAkdtocz2OdCYQob42WYCLnRSHO3tHJn00m1X3TEwa',
+        'apiKey': '',
     },
     'mailgun': {
         'accountId': 'sandbox5a7d08475c1b4c0b80007da21b5e67a7',
-        'apiKey': '523fb3f7fa69c8564c9a9f6ad09fad90-0d2e38f7-a62fa648'
+        'apiKey': ''
     }
 };
 

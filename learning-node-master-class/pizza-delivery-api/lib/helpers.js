@@ -54,18 +54,6 @@ helpers.createRandomString = (stringLength) => {
     }
 }
 
-// Send an email
-helpers.sendEmail = () => {
-
-    // Validate parameters
-
-    // TODO: put the logic here
-    // if () {
-
-    // } else {
-    //     callback('Given parameters were missing or invalid');
-    // }
-};
 
 // Payment with stripe
 helpers.proceedPayment = (total, callback) => {

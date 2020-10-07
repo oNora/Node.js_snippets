@@ -46,7 +46,7 @@ handlers._users = {};
  * Optional data: none
  *
  * How to test it?
- * Make a post request (postman) with following object:
+ * Make a POST request (postman) with following object:
  * {
  *  "firstName":"John",
  *  "lastName":"Smit",
@@ -126,8 +126,8 @@ handlers._users.post = (data, callback) => {
  * Required data: phone
  * Optional data: none
  *
- * How to test it? Make a get request with existing phone numbers and add a token (must be created first) in a heder of the request:
- * localhost:3000/users?phone=5551234568
+ * How to test it? Make a GET request with existing phone numbers and add a token (must be created first) in a heder of the request:
+ * (yourHost)/users?phone=(Existing user phone)
  *
 
  */
@@ -173,7 +173,7 @@ handlers._users.get = (data, callback) => {
  * Required data: phone
  * Optional data: firstName, lastName, password (at least one must be specified)
  *
- * How to test it? Make a put request (postman) with object similar to the following
+ * How to test it? Make a PUT request (postman) with object similar to the following
  * with requeued field and at lest one optional whit updated data and add a token (must be created first) in a heder of the request :
  * {
  *  "firstName":"John 2",
@@ -349,7 +349,7 @@ handlers._tokens.verifyToken = (id, phone, callback) => {
  * Optional data: none
  *
  * How to test it?
- * Use date from existing user and make a post request (postman) with following object:
+ * Use date from existing user and make a POST request (postman) with following object:
  * {
  *  "phone":"5551234568",
  *  "password":"ThisIsAPassword",
@@ -411,7 +411,7 @@ handlers._tokens.post = (data, callback) => {
  * Required data: id
  * Optional data: none
  *
- * How to test it? Make a get request with existing token id:
+ * How to test it? Make a GET request with existing token id:
  * localhost:3000/tokens?id=9gjjx4m0brso5vvliqtt
  *
  */
@@ -537,7 +537,7 @@ handlers._tokens.delete = (data, callback) => {
  * Required data: id
  * Optional data: none
  *
- * How to test it? Make a get request with existing token id:
+ * How to test it? Make a GET request with existing token id:
  * localhost:3000/tokens?id=9gjjx4m0brso5vvliqtt
  *
  */
