@@ -65,8 +65,10 @@ server.unifiedServer = function (req, res) {
     req.on('end', () => {
         buffer += decoder.end();
 
-        // Choose the handles this request should got to.  If one is not found, use the notFound handler.
-        const chosenHandler = typeof (server.router[trimmedPath]) !== 'undefined' ? server.router[trimmedPath] : handlers.notFound;
+        let chosenHandler = typeof (server.router[trimmedPath]) !== 'undefined' ? server.router[trimmedPath] : handlers.notFound;
+
+        // If the request is within the public directory use to the public handler instead
+        chosenHandler = trimmedPath.indexOf('public/') > -1 ? handlers.public : chosenHandler;
 
         // Construct the data object to send to the handler
         const data = {
@@ -78,19 +80,53 @@ server.unifiedServer = function (req, res) {
         };
 
         // Route the request to the handler specifies in the router
-        chosenHandler(data, (statusCode, payload) => {
+        chosenHandler(data, (statusCode, payload, contentType) => {
+
+            // Determine the type of response (fallback to JSON)
+            contentType = typeof (contentType) == 'string' ? contentType : 'json';
 
             // Use the status code returned from the handler, or set the default status code to 200
             statusCode = typeof (statusCode) == 'number' ? statusCode : 200;
 
-            // Use the payload returned from the handler, or set the default payload to an empty object
-            payload = typeof (payload) == 'object' ? payload : {};
+            // Return the response parts that are content-type specific
+            let payloadString = '';
+            if (contentType == 'json') {
+                res.setHeader('Content-Type', 'application/json');
+                payload = typeof (payload) == 'object' ? payload : {};
+                payloadString = JSON.stringify(payload);
+            }
 
-            // Convert the payload to a string
-            const payloadString = JSON.stringify(payload);
+            if (contentType == 'html') {
+                res.setHeader('Content-Type', 'text/html');
+                payloadString = typeof (payload) == 'string' ? payload : '';
+            }
+
+            if (contentType == 'favicon') {
+                res.setHeader('Content-Type', 'image/x-icon');
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
+
+            if (contentType == 'plain') {
+                res.setHeader('Content-Type', 'text/plain');
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
+
+            if (contentType == 'css') {
+                res.setHeader('Content-Type', 'text/css');
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
+
+            if (contentType == 'png') {
+                res.setHeader('Content-Type', 'image/png');
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
+
+            if (contentType == 'jpg') {
+                res.setHeader('Content-Type', 'image/jpeg');
+                payloadString = typeof (payload) !== 'undefined' ? payload : '';
+            }
 
             // Return the response
-            res.setHeader('Content-Type', 'application/json');
             res.writeHead(statusCode);
             res.end(payloadString);
 
@@ -108,12 +144,15 @@ server.unifiedServer = function (req, res) {
 
 // Define the request router
 server.router = {
+    '': handlers.index,
     'test': handlers.test,
     'users': handlers.users,
     'tokens': handlers.tokens,
     'menu': handlers.menu,
     'shoppingCard': handlers.shoppingCard,
     'payment': handlers.payment,
+    'favicon.ico': handlers.favicon,
+    'public': handlers.public
 };
 
 server.init = () => {

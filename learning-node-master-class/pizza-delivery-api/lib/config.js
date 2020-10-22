@@ -26,6 +26,12 @@ environments.staging = {
     'mailgun': {
         'accountId': 'sandbox5a7d08475c1b4c0b80007da21b5e67a7',
         'apiKey': ''
+    },
+    'templateGlobals': {
+        'appName': 'UptimeChecker',
+        'companyName': 'NotARealCompany, Inc.',
+        'yearCreated': '2018',
+        'baseUrl': 'http://localhost:3003/'
     }
 };
 
@@ -41,6 +47,12 @@ environments.production = {
     'mailgun': {
         'accountId': 'sandbox5a7d08475c1b4c0b80007da21b5e67a7',
         'apiKey': ''
+    },
+    'templateGlobals': {
+        'appName': 'UptimeChecker',
+        'companyName': 'NotARealCompany, Inc.',
+        'yearCreated': '2018',
+        'baseUrl': 'http://localhost:5000/'
     }
 };
 
