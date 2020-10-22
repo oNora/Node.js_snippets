@@ -1,6 +1,6 @@
-# Homework Assignment #2 - pizza delivery API
+# Homework Assignment #2 & #3 - pizza delivery API
 
-## 1. Requirement
+## 1. API Requirement
 
 Build an API for a pizza-delivery company. No frontend required, just the API with the following specifications:
 
@@ -15,6 +15,14 @@ Build an API for a pizza-delivery company. No frontend required, just the API wi
 5. A logged-in user should be able to create an order.Use the Sandbox of Stripe.com to accept their payment. Note: Use the stripe sandbox for your testing. Follow this link and click on the "tokens" tab to see the fake tokens you can use server-side to confirm the integration is working: https://stripe.com/docs/testing#cards
 
 6. When an order is placed, you should email the user a receipt. Use the sandbox of Mailgun.com for this. Note: Every Mailgun account comes with a sandbox email account domain (whatever@sandbox123.mailgun.org) that you can send from by default. So, there's no need to setup any DNS for your domain for this task https://documentation.mailgun.com/en/latest/faqs.html#how-do-i-pick-a-domain-name-for-my-mailgun-account
+
+## 2. UI Requirement
+
+1. Signup on the site
+2. View all the items available to order
+3. Fill up a shopping cart
+
+
 
 ## API calls
 Use Postman to test the API
