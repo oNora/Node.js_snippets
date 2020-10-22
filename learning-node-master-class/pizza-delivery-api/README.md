@@ -1,4 +1,6 @@
 # Homework Assignment #2 & #3 - pizza delivery API
+ This projec is created as a Homework for the [The Node.js Master Class](https://www.pirple.com/) The first part (Homework Assignment #2) is to create an API for pizza delivary and the second one (Homework Assignment #3) is to create an UI for it.
+
 
 ## 1. API Requirement
 
