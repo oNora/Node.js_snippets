@@ -135,6 +135,204 @@ handlers.index = (data, callback) => {
     }
 };
 
+// Create Account
+handlers.accountCreate = (data, callback) => {
+    // Reject any request that isn't a GET
+    if (data.method == 'get') {
+
+        // Prepare data for interpolation
+        const templateData = {
+            'head.title': 'Create an Account',
+            'head.description': 'Signup is easy and only takes a few seconds.',
+            'body.class': 'accountCreate'
+        };
+
+        // Read in a template as a string
+        helpers.getTemplate('accountCreate', templateData, (err, str) => {
+            if (!err && str) {
+
+                // Add the universal header and footer
+                helpers.addUniversalTemplates(str, templateData, (err, str) => {
+                    if (!err && str) {
+                        // Return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
+// Create New Session
+handlers.sessionCreate = (data, callback) => {
+    // Reject any request that isn't a GET
+    if (data.method == 'get') {
+
+        // Prepare data for interpolation
+        const templateData = {
+            'head.title': 'Login to your account.',
+            'head.description': 'Please enter your phone number and password to access your account.',
+            'body.class': 'sessionCreate'
+        };
+
+        // Read in a template as a string
+        helpers.getTemplate('sessionCreate', templateData, (err, str) => {
+            if (!err && str) {
+                // Add the universal header and footer
+                helpers.addUniversalTemplates(str, templateData, (err, str) => {
+                    if (!err && str) {
+                        // Return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
+// Session has been deleted
+handlers.sessionDeleted = (data, callback) => {
+    // Reject any request that isn't a GET
+    if (data.method == 'get') {
+
+        // Prepare data for interpolation
+        const templateData = {
+            'head.title': 'Logged Out',
+            'head.description': 'You have been logged out of your account.',
+            'body.class': 'sessionDeleted'
+        };
+        // Read in a template as a string
+
+        helpers.getTemplate('sessionDeleted', templateData, (err, str) => {
+            if (!err && str) {
+                // Add the universal header and footer
+                helpers.addUniversalTemplates(str, templateData, (err, str) => {
+                    if (!err && str) {
+                        // Return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
+// Edit Your Account
+handlers.accountEdit = (data, callback) => {
+    // Reject any request that isn't a GET
+    if (data.method == 'get') {
+        // Prepare data for interpolation
+
+        const templateData = {
+            'head.title': 'Account Settings',
+            'body.class': 'accountEdit'
+        };
+
+        // Read in a template as a string
+        helpers.getTemplate('accountEdit', templateData, (err, str) => {
+            if (!err && str) {
+                // Add the universal header and footer
+                helpers.addUniversalTemplates(str, templateData, (err, str) => {
+                    if (!err && str) {
+                        // Return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
+// Account has been deleted
+handlers.accountDeleted = (data, callback) => {
+    // Reject any request that isn't a GET
+    if (data.method == 'get') {
+        // Prepare data for interpolation
+        const templateData = {
+            'head.title': 'Account Deleted',
+            'head.description': 'Your account has been deleted.',
+            'body.class': 'accountDeleted'
+        };
+        // Read in a template as a string
+        helpers.getTemplate('accountDeleted', templateData, (err, str) => {
+            if (!err && str) {
+                // Add the universal header and footer
+                helpers.addUniversalTemplates(str, templateData, (err, str) => {
+                    if (!err && str) {
+                        // Return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
+// Account has been deleted
+handlers.menuSection = (data, callback) => {
+    // Reject any request that isn't a GET
+    if (data.method == 'get') {
+        // Prepare data for interpolation
+        const templateData = {
+            'head.title': 'menu Section',
+            'head.description': 'Menu list.',
+            'body.class': 'menuSection'
+        };
+        // Read in a template as a string
+        helpers.getTemplate('menuSection', templateData, (err, str) => {
+            if (!err && str) {
+                // Add the universal header and footer
+                helpers.addUniversalTemplates(str, templateData, (err, str) => {
+                    if (!err && str) {
+                        // Return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+};
+
 /**
  *
  * API
@@ -190,6 +388,7 @@ handlers._users.post = (data, callback) => {
          */
         _data.read('users', phone, (err, data) => {
             if (err) {
+                console.log('_data.read');
                 // Hash the password - not storing it as plain text
                 const hashedPassword = helpers.hash(password);
 
@@ -388,7 +587,7 @@ handlers._users.delete = (data, callback) => {
 
     if (phone) {
         // Get token from headers
-        // const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
+        const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
 
         // Verify that the given token is valid for the phone number
         handlers._tokens.verifyToken(token, phone, (tokenIsValid) => {

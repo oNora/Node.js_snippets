@@ -146,13 +146,19 @@ server.unifiedServer = function (req, res) {
 server.router = {
     '': handlers.index,
     'test': handlers.test,
-    'users': handlers.users,
-    'tokens': handlers.tokens,
-    'menu': handlers.menu,
+    'api/users': handlers.users,
+    'api/tokens': handlers.tokens,
+    'api/menu': handlers.menu,
     'shoppingCard': handlers.shoppingCard,
     'payment': handlers.payment,
     'favicon.ico': handlers.favicon,
-    'public': handlers.public
+    'public': handlers.public,
+    'account/create': handlers.accountCreate,
+    'account/edit': handlers.accountEdit,
+    'account/deleted': handlers.accountDeleted,
+    'session/create': handlers.sessionCreate,
+    'session/deleted': handlers.sessionDeleted,
+    'menu': handlers.menuSection
 };
 
 server.init = () => {
