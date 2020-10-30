@@ -237,6 +237,7 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
             } else {
                 // If successful, set the token and redirect the user
                 app.setSessionToken(newResponsePayload);
+                app.loadMenuInfo(newPayload.phone);
                 // window.location = '/menu';
             }
         });
@@ -245,7 +246,7 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
     if (formId == 'sessionCreate') {
         app.setSessionToken(responsePayload);
         // window.location = '/menu';
-        app.loadMenuInfo();
+        app.loadMenuInfo(requestPayload.phone);
     }
 
     // If forms saved successfully and they have success messages, show them
@@ -272,16 +273,26 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
 
 };
 
-app.loadMenuInfo = () => {
+app.loadMenuInfo = (userPhone) => {
+    const queryStringObject = {
+        phone: userPhone
+    }
+
     app.client.request(undefined, 'api/menu', 'GET', queryStringObject, undefined, function (statusCode, responsePayload) {
         // Display an error on the form if needed
         if (statusCode == 200) {
-            console.log('responsePayload: ', responsePayload);
-            // window.location = '/menu';
+            localStorage.setItem('menuItems', JSON.stringify(responsePayload));
+            window.location = '/menu';
         } else {
-
+            localStorage.setItem('menuItems', JSON.stringify([]));
+            window.location = '/menu';
         }
     });
+}
+
+// Get menu items for localStorage
+app.getMenuItems = () => {
+    app.menuItems = JSON.parse(localStorage.getItem('menuItems'));
 }
 
 // Get the session token from localstorage and set it in the app.config object
@@ -557,6 +568,9 @@ app.init = function () {
 
     // Load data on page
     app.loadDataOnPage();
+
+    // Get the token from localstorage
+    app.getMenuItems();
 
 };
 
