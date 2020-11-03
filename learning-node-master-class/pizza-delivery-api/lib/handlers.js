@@ -1010,7 +1010,6 @@ handlers._menu.get = (data, callback) => {
                 // Lookup the menu
                 _data.read('menuItems', 'menu', (err, dataMenu) => {
                     if (!err && dataMenu) {
-                        console.log("dataMenu", dataMenu);
                         callback(200, dataMenu);
                     } else {
                         callback(404);
