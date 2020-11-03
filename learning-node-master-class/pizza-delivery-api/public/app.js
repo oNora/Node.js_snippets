@@ -295,6 +295,104 @@ app.getMenuItems = () => {
     app.menuItems = JSON.parse(localStorage.getItem('menuItems'));
 }
 
+app.btnClickHandler = (e) => {
+
+    const getStorage = JSON.parse(localStorage.getItem('order'));
+    let existingOrder = [];
+    if (getStorage !== null && getStorage.hasOwnProperty('menuItems')) {
+        existingOrder = getStorage.menuItems;
+    }
+
+    const btnClassName = e.target.className;
+    const btnType = btnClassName.split('_')[0];
+
+    const orderData = {
+        'phone': JSON.parse(localStorage.getItem('token')).phone,
+        'menuItems': []
+    };
+
+    // if there is already any item in shoping card
+    if (existingOrder.length > 0) {
+        orderData.menuItems = existingOrder;
+    }
+
+    const liElSelector = e.target.className.split(`${btnType}_`)[1];
+    if (btnType == 'addBtn') {
+        const allElementsP = document.querySelectorAll(`.${liElSelector} p`);
+        const allElementsInput = document.querySelectorAll(`.${liElSelector} input`);
+        const menuItem = {
+            'id': allElementsInput[0].value,
+            'itemName': allElementsP[0].innerHTML,
+            'quantity': allElementsInput[1].value,
+            'singlePrice': +allElementsP[1].innerHTML.split('Single Pice: ')[1]
+
+        }
+        orderData.menuItems.push(menuItem);
+        localStorage.setItem('order', JSON.stringify(orderData));
+        // prevent adding this item again  to the card
+        document.querySelector(`.${btnClassName}`).disabled = true;
+        document.querySelector(`.${btnClassName.replace('addBtn', 'btnRemove')}`).disabled = false;
+    }
+
+    if (btnType == 'btnRemove') {
+        const currentItemId = document.querySelectorAll(`.${liElSelector} input`)[0].value;
+        const filtered = existingOrder.filter(item => item.id != currentItemId);
+
+        orderData.menuItems = filtered;
+        localStorage.setItem('order', JSON.stringify(orderData));
+        // enable adding the item to the card after remove
+        document.querySelector(`.${btnClassName.replace('btnRemove', 'addBtn')}`).disabled = false;
+    }
+
+
+}
+
+// Load data on menu page
+app.loadMenuPage = () => {
+
+    let menuListEl;
+
+    for (let i = 0; i < app.menuItems.length; i++) {
+
+        const pElement = document.createElement('p');
+        const p2Element = document.createElement('p');
+        const pText = document.createTextNode(`${app.menuItems[i].name}`);
+        const p2Text = document.createTextNode(`Single Pice: ${app.menuItems[i].price}`);
+        pElement.appendChild(pText);
+        p2Element.appendChild(p2Text);
+
+        const input = document.createElement('INPUT');
+        const inputHidden = document.createElement('INPUT');
+        input.setAttribute('type', 'number');
+        input.setAttribute('value', '0');
+        inputHidden.setAttribute('type', 'hidden');
+        inputHidden.setAttribute('class', 'itemId');
+        inputHidden.setAttribute('value', app.menuItems[i].id);
+
+        const btn = document.createElement('BUTTON');
+        btn.innerHTML = 'add to card';
+        btn.setAttribute('class', `addBtn_menuItem_${i}`);
+        btn.addEventListener('click', app.btnClickHandler);
+        const btnRemove = document.createElement('BUTTON');
+        btnRemove.innerHTML = 'remove form card';
+        btnRemove.setAttribute('class', `btnRemove_menuItem_${i}`);
+        btnRemove.addEventListener('click', app.btnClickHandler);
+
+        // create Li element and append inner elements
+        const liElement = document.createElement('LI');
+        liElement.setAttribute('class', `menuItem_${i}`);
+        liElement.appendChild(pElement);
+        liElement.appendChild(p2Element);
+        liElement.appendChild(inputHidden);
+        liElement.appendChild(input);
+        liElement.appendChild(btn);
+        liElement.appendChild(btnRemove);
+        document.querySelector('#menuList').appendChild(liElement)
+
+    }
+
+}
+
 // Get the session token from localstorage and set it in the app.config object
 app.getSessionToken = function () {
     var tokenString = localStorage.getItem('token');
@@ -393,6 +491,11 @@ app.loadDataOnPage = function () {
     if (primaryClass == 'checksEdit') {
         app.loadChecksEditPage();
     }
+
+    if (primaryClass == 'menuSection') {
+        app.loadMenuPage();
+    }
+
 };
 
 // Load the account edit page specifically
@@ -566,11 +669,12 @@ app.init = function () {
     // Renew token
     app.tokenRenewalLoop();
 
+    // Get the token from localstorage
+    app.getMenuItems();
+
     // Load data on page
     app.loadDataOnPage();
 
-    // Get the token from localstorage
-    app.getMenuItems();
 
 };
 
