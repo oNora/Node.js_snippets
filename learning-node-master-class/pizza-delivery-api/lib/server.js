@@ -149,8 +149,8 @@ server.router = {
     'api/users': handlers.users,
     'api/tokens': handlers.tokens,
     'api/menu': handlers.menu,
-    'shoppingCard': handlers.shoppingCard,
-    'payment': handlers.payment,
+    'api/shoppingCard': handlers.shoppingCard,
+    'api/payment': handlers.payment,
     'favicon.ico': handlers.favicon,
     'public': handlers.public,
     'account/create': handlers.accountCreate,
@@ -158,7 +158,8 @@ server.router = {
     'account/deleted': handlers.accountDeleted,
     'session/create': handlers.sessionCreate,
     'session/deleted': handlers.sessionDeleted,
-    'menu': handlers.menuSection
+    'menu': handlers.menuSection,
+    'shoppingCard': handlers.shoppingCardSection
 };
 
 server.init = () => {

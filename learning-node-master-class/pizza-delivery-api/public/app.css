@@ -273,11 +273,45 @@ input.disabled {
     cursor: pointer;
 }
 
+#menuList button:hover {
+    background: rgba(255, 0, 0, 0.747);
+}
+
 #menuList button:first-of-type {
     background: rgb(51, 124, 51);
+}
+
+#menuList button:first-of-type:hover {
+    background: rgb(63, 155, 63);
 }
 
 #menuList button:disabled {
     background-color: rgb(193, 235, 193);
     cursor: auto;
+}
+
+.bigBtn {
+    display: block;
+    margin: auto;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: rgb(241, 132, 187);
+    cursor: pointer;
+}
+
+.bigBtn:hover {
+    margin: auto;
+    padding: 10px;
+    background-color: rgb(243, 108, 176);
+}
+
+.backMenu,
+.backMenu:visited,
+.backMenu:hover {
+    display: inline-block;
+    padding: 10px;
+    background-color: 000;
+    border-radius: 5px;
+    color: fff;
+    cursor: pointer;
 }

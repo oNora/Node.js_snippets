@@ -307,7 +307,7 @@ app.btnClickHandler = (e) => {
     const btnType = btnClassName.split('_')[0];
 
     const orderData = {
-        'phone': JSON.parse(localStorage.getItem('token')).phone,
+        'userPhone': JSON.parse(localStorage.getItem('token')).phone,
         'menuItems': []
     };
 
@@ -496,6 +496,9 @@ app.loadDataOnPage = function () {
         app.loadMenuPage();
     }
 
+    if (primaryClass == 'shoppingCardSection') {
+        app.loadShoppingCard();
+    }
 };
 
 // Load the account edit page specifically
@@ -601,6 +604,45 @@ app.loadChecksListPage = function () {
     }
 };
 
+app.submitOrder = () => {
+
+    const getOrder = JSON.parse(localStorage.getItem('order'));
+
+    if (getOrder != null) {
+        app.client.request(undefined, 'api/shoppingCard', 'POST', undefined, getOrder, function (newStatusCode, newResponsePayload) {
+            // Display an error on the form if needed
+            if (newStatusCode !== 200) {
+
+                //TODO: show error msg
+
+            } else {
+                // If successful, set the token and redirect the user
+                localStorage.setItem('orderId', JSON.stringify(newResponsePayload.orderId));
+                window.location = '/shoppingCard';
+            }
+        });
+    } else {
+        window.location = '/shoppingCard';
+    }
+
+};
+
+app.addEventsListener = () => {
+    const submitBrn = document.querySelector('.submitOrder');
+    if (submitBrn) {
+        submitBrn.addEventListener('click', app.submitOrder);
+    }
+}
+
+app.loadShoppingCard = () => {
+    const getOrder = JSON.parse(localStorage.getItem('order'));
+
+    if (getOrder === null) {
+        document.querySelector('.errorMassage').innerHTML = 'You didn\'t add nothing to the shopping card yet.';
+    } else {
+        //orderDetails
+    }
+}
 
 // // Load the checks edit page specifically
 // app.loadChecksEditPage = function () {
@@ -656,6 +698,8 @@ app.tokenRenewalLoop = function () {
 
 // Init (bootstrapping)
 app.init = function () {
+
+    app.addEventsListener();
 
     // Bind all form submissions
     app.bindForms();

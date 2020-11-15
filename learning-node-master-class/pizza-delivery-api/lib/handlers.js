@@ -333,6 +333,36 @@ handlers.menuSection = (data, callback) => {
     }
 };
 
+handlers.shoppingCardSection = (data, callback) => {
+    // Reject any request that isn't a GET
+    if (data.method == 'get') {
+        // Prepare data for interpolation
+        const templateData = {
+            'head.title': 'shopping card Section',
+            'head.description': 'items in the shopping card.',
+            'body.class': 'shoppingCardSection'
+        };
+        // Read in a template as a string
+        helpers.getTemplate('shoppingCardSection', templateData, (err, str) => {
+            if (!err && str) {
+                // Add the universal header and footer
+                helpers.addUniversalTemplates(str, templateData, (err, str) => {
+                    if (!err && str) {
+                        // Return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
 /**
  *
  * API
@@ -673,7 +703,7 @@ handlers._tokens.post = (data, callback) => {
 
     const phone = typeof (data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
     const password = typeof (data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false;
-
+    console.log('data.payload', data.payload);
     if (phone && password) {
 
         // Lookup the user who marches that phone number
@@ -1061,12 +1091,12 @@ handlers._shoppingCard = {};
  *    ]}
  */
 handlers._shoppingCard.post = (data, callback) => {
-    // console.log('data paylod: ', data.payload);
+
     const phone = typeof (data.payload.userPhone) == 'string' && data.payload.userPhone.trim().length == 10 ? data.payload.userPhone.trim() : false;
     const menuItems = data.payload.menuItems.constructor === Array && data.payload.menuItems.length > 0 ? data.payload.menuItems : false;
 
     if (phone && menuItems) {
-
+        console.log('first if');
         // Get token from headers
         const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
 
@@ -1097,6 +1127,7 @@ handlers._shoppingCard.post = (data, callback) => {
                         // Store the order
                         _data.create('orders', orderId, cartData, (err) => {
                             if (!err) {
+                                console.log('cartData', cartData);
                                 callback(200, cartData);
                             } else {
                                 console.log(err);
