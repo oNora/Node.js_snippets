@@ -363,6 +363,36 @@ handlers.shoppingCardSection = (data, callback) => {
     }
 }
 
+handlers.confirmationPayment = (data, callback) => {
+    // Reject any request that isn't a GET
+    if (data.method == 'get') {
+        // Prepare data for interpolation
+        const templateData = {
+            'head.title': 'payment info',
+            'head.description': '',
+            'body.class': 'confirmationPayment'
+        };
+        // Read in a template as a string
+        helpers.getTemplate('confirmationPayment', templateData, (err, str) => {
+            if (!err && str) {
+                // Add the universal header and footer
+                helpers.addUniversalTemplates(str, templateData, (err, str) => {
+                    if (!err && str) {
+                        // Return that page as HTML
+                        callback(200, str, 'html');
+                    } else {
+                        callback(500, undefined, 'html');
+                    }
+                });
+            } else {
+                callback(500, undefined, 'html');
+            }
+        });
+    } else {
+        callback(405, undefined, 'html');
+    }
+}
+
 /**
  *
  * API
@@ -418,7 +448,6 @@ handlers._users.post = (data, callback) => {
          */
         _data.read('users', phone, (err, data) => {
             if (err) {
-                console.log('_data.read');
                 // Hash the password - not storing it as plain text
                 const hashedPassword = helpers.hash(password);
 
@@ -437,7 +466,6 @@ handlers._users.post = (data, callback) => {
                         if (!err) {
                             callback(200);
                         } else {
-                            console.log(err);
                             callback(500, {
                                 'Error': 'Could not create the new user'
                             });
@@ -703,7 +731,7 @@ handlers._tokens.post = (data, callback) => {
 
     const phone = typeof (data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 ? data.payload.phone.trim() : false;
     const password = typeof (data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false;
-    console.log('data.payload', data.payload);
+
     if (phone && password) {
 
         // Lookup the user who marches that phone number
@@ -1096,7 +1124,6 @@ handlers._shoppingCard.post = (data, callback) => {
     const menuItems = data.payload.menuItems.constructor === Array && data.payload.menuItems.length > 0 ? data.payload.menuItems : false;
 
     if (phone && menuItems) {
-        console.log('first if');
         // Get token from headers
         const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
 
@@ -1127,7 +1154,6 @@ handlers._shoppingCard.post = (data, callback) => {
                         // Store the order
                         _data.create('orders', orderId, cartData, (err) => {
                             if (!err) {
-                                console.log('cartData', cartData);
                                 callback(200, cartData);
                             } else {
                                 console.log(err);
@@ -1213,7 +1239,8 @@ handlers._shoppingCard.get = (data, callback) => {
  * How to test it?
  * Create a PUT request with the following params and at least one menu item and add a token (must be created first) in a heder of the request:
  * {
- *  "phone": "8q14kyby83",
+ *  "userPhone": "5551234571",
+ *  "orderId": "8q14kyby83",
  *   "menuItems": [
  *        {
  *            "id": 3,
@@ -1259,11 +1286,9 @@ handlers._shoppingCard.put = (data, callback) => {
 
                         // Update the order
                         _data.update('orders', orderId, cartData, (err) => {
-                            console.log('err: ', err);
                             if (!err) {
                                 callback(200, cartData);
                             } else {
-                                console.log(err);
                                 callback(500, {
                                     'Error': 'Could not UPDATE the order'
                                 });
@@ -1392,12 +1417,14 @@ handlers._payment.post = (data, callback) => {
     const cardCVVCode = typeof data.payload.cardCVVCode == 'string' && data.payload.cardCVVCode.trim().length === 3 ? data.payload.cardCVVCode.trim() : false;
 
     if (userPhone && orderId && cardNumber && cardExpiryDate && cardHolder && cardCVVCode) {
+
         // Get token from headers
         const token = typeof (data.headers.token) == 'string' ? data.headers.token : false;
 
         // Verify that the given token is valid for the phone number
         handlers._tokens.verifyToken(token, userPhone, (tokenIsValid) => {
             if (tokenIsValid) {
+
                 _data.read('orders', orderId, (err, orderData) => {
 
                     if (!err && orderData) {
@@ -1408,6 +1435,7 @@ handlers._payment.post = (data, callback) => {
                         };
 
                         helpers.proceedPayment(orderData.orderTotalPrice, (err) => {
+
                             if (!err) {
 
                                 helpers.sendEmail(orderData.userEmail, orderData.orderTotalPrice, (err) => {

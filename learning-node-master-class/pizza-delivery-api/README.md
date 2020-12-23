@@ -23,7 +23,7 @@ Build an API for a pizza-delivery company. No frontend required, just the API wi
 1. Signup on the site
 2. View all the items available to order
 3. Fill up a shopping cart
-
+4. Place an order (with fake credit card credentials), and receive an email receipt
 
 
 ## API calls
@@ -208,10 +208,10 @@ POST accepted params (use existing data). Must have at least one menu item:
 
 <pre>
  {
- "orderId":"8q14kyby83",
- "userPhone": "5551234568",
+ "orderId":"9yjubp0p7d",
+ "userPhone": "5551234571",
  "cardNumber": "4242424242424242",
- "cardExpiryDate": "07.07.2022",
+ "cardExpiryDate": "07/25",
  "cardHolder": "John Smit",
  "cardCVVCode": "545"
  } </pre>

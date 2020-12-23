@@ -159,7 +159,8 @@ server.router = {
     'session/create': handlers.sessionCreate,
     'session/deleted': handlers.sessionDeleted,
     'menu': handlers.menuSection,
-    'shoppingCard': handlers.shoppingCardSection
+    'shoppingCard': handlers.shoppingCardSection,
+    'confirmationPayment': handlers.confirmationPayment,
 };
 
 server.init = () => {

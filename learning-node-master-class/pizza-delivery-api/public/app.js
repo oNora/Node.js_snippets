@@ -342,6 +342,7 @@ app.btnClickHandler = (e) => {
         localStorage.setItem('order', JSON.stringify(orderData));
         // enable adding the item to the card after remove
         document.querySelector(`.${btnClassName.replace('btnRemove', 'addBtn')}`).disabled = false;
+        document.querySelector(`.menuItem_${btnClassName.split('_')[2]} input[type='number']`).value = 0;
     }
 
 
@@ -391,6 +392,19 @@ app.loadMenuPage = () => {
 
     }
 
+    const getOrder = JSON.parse(localStorage.getItem('order'));
+    if (getOrder !== null) {
+        app.loadExistingOrder(getOrder.menuItems);
+    }
+
+}
+
+app.loadExistingOrder = (orderItems) => {
+
+    for (let i = 0; i < orderItems.length; i++) {
+        document.querySelector(`.menuItem_${(+orderItems[i].id -1)} input[type='number']`).value = orderItems[i].quantity;
+        document.querySelector(`.addBtn_menuItem_${(+orderItems[(i)].id -1)}`).disabled = true;
+    }
 }
 
 // Get the session token from localstorage and set it in the app.config object
@@ -499,6 +513,11 @@ app.loadDataOnPage = function () {
     if (primaryClass == 'shoppingCardSection') {
         app.loadShoppingCard();
     }
+
+    if (primaryClass == 'confirmationPayment') {
+        app.loadConfirmationPayment();
+    }
+
 };
 
 // Load the account edit page specifically
@@ -607,20 +626,40 @@ app.loadChecksListPage = function () {
 app.submitOrder = () => {
 
     const getOrder = JSON.parse(localStorage.getItem('order'));
+    const getOrderId = JSON.parse(localStorage.getItem('orderId'));
 
     if (getOrder != null) {
-        app.client.request(undefined, 'api/shoppingCard', 'POST', undefined, getOrder, function (newStatusCode, newResponsePayload) {
-            // Display an error on the form if needed
-            if (newStatusCode !== 200) {
 
-                //TODO: show error msg
+        if (getOrderId === null) {
+            app.client.request(undefined, 'api/shoppingCard', 'POST', undefined, getOrder, function (newStatusCode, newResponsePayload) {
+                // Display an error on the form if needed
+                if (newStatusCode !== 200) {
 
-            } else {
-                // If successful, set the token and redirect the user
-                localStorage.setItem('orderId', JSON.stringify(newResponsePayload.orderId));
-                window.location = '/shoppingCard';
-            }
-        });
+                    //TODO: show error msg
+
+                } else {
+                    // If successful, set the token and redirect the user
+                    localStorage.setItem('orderId', JSON.stringify(newResponsePayload.orderId));
+                    window.location = '/shoppingCard';
+                }
+            });
+        }
+
+        if (getOrderId !== null) {
+            getOrder.orderId = getOrderId;
+            app.client.request(undefined, 'api/shoppingCard', 'PUT', undefined, getOrder, function (newStatusCode, newResponsePayload) {
+                // Display an error on the form if needed
+                if (newStatusCode !== 200) {
+
+                    //TODO: show error msg
+
+                } else {
+                    // If successful, set the token and redirect the user
+                    window.location = '/shoppingCard';
+                }
+            });
+        }
+
     } else {
         window.location = '/shoppingCard';
     }
@@ -632,6 +671,11 @@ app.addEventsListener = () => {
     if (submitBrn) {
         submitBrn.addEventListener('click', app.submitOrder);
     }
+
+    const payBtn = document.querySelector('.payButton');
+    if (payBtn) {
+        payBtn.addEventListener('click', app.payButton);
+    }
 }
 
 app.loadShoppingCard = () => {
@@ -639,51 +683,75 @@ app.loadShoppingCard = () => {
 
     if (getOrder === null) {
         document.querySelector('.errorMassage').innerHTML = 'You didn\'t add nothing to the shopping card yet.';
+        document.querySelector('.order-info').style.display = 'none';
     } else {
+        document.querySelector('.order-info').style.display = 'block';
+
         //orderDetails
+        const order = JSON.parse(localStorage.getItem('order'));
+        let totalPrice = 0;
+        for (let i = 0; i < order.menuItems.length; i++) {
+            console.log('app.menuItems[i]: ', order.menuItems[i]);
+
+            const liElement = document.createElement('li');
+            const liText = document.createTextNode(`${order.menuItems[i].itemName}, quantity: ${order.menuItems[i].quantity}, single price ${order.menuItems[i].singlePrice} `);
+            liElement.appendChild(liText);
+
+            totalPrice =+ (order.menuItems[i].singlePrice * order.menuItems[i].quantity);
+            document.querySelector('.orderDetails ul').appendChild(liElement)
+        }
+
+        const lastLiiElement = document.createElement('li');
+        const lastLiiText = document.createTextNode(`total price: ${totalPrice}`);
+        lastLiiElement.appendChild(lastLiiText);
+
+        document.querySelector('.orderDetails ul').appendChild(lastLiiElement);
     }
 }
 
-// // Load the checks edit page specifically
-// app.loadChecksEditPage = function () {
-//     // Get the check id from the query string, if none is found then redirect back to dashboard
-//     var id = typeof (window.location.href.split('=')[1]) == 'string' && window.location.href.split('=')[1].length > 0 ? window.location.href.split('=')[1] : false;
-//     if (id) {
-//         // Fetch the check data
-//         var queryStringObject = {
-//             'id': id
-//         };
-//         app.client.request(undefined, 'api/checks', 'GET', queryStringObject, undefined, function (statusCode, responsePayload) {
-//             if (statusCode == 200) {
+app.payButton = () => {
+    console.log('payButton!!!');
+    const getOrder = JSON.parse(localStorage.getItem('order'));
+    const getOrderId = JSON.parse(localStorage.getItem('orderId'));
 
-//                 // Put the hidden id field into both forms
-//                 var hiddenIdInputs = document.querySelectorAll("input.hiddenIdInput");
-//                 for (var i = 0; i < hiddenIdInputs.length; i++) {
-//                     hiddenIdInputs[i].value = responsePayload.id;
-//                 }
+    if (getOrder.userPhone != null) {
 
-//                 // Put the data into the top form as values where needed
-//                 document.querySelector("#checksEdit1 .displayIdInput").value = responsePayload.id;
-//                 document.querySelector("#checksEdit1 .displayStateInput").value = responsePayload.state;
-//                 document.querySelector("#checksEdit1 .protocolInput").value = responsePayload.protocol;
-//                 document.querySelector("#checksEdit1 .urlInput").value = responsePayload.url;
-//                 document.querySelector("#checksEdit1 .methodInput").value = responsePayload.method;
-//                 document.querySelector("#checksEdit1 .timeoutInput").value = responsePayload.timeoutSeconds;
-//                 var successCodeCheckboxes = document.querySelectorAll("#checksEdit1 input.successCodesInput");
-//                 for (var i = 0; i < successCodeCheckboxes.length; i++) {
-//                     if (responsePayload.successCodes.indexOf(parseInt(successCodeCheckboxes[i].value)) > -1) {
-//                         successCodeCheckboxes[i].checked = true;
-//                     }
-//                 }
-//             } else {
-//                 // If the request comes back as something other than 200, redirect back to dashboard
-//                 window.location = '/checks/all';
-//             }
-//         });
-//     } else {
-//         window.location = '/checks/all';
-//     }
-// };
+        if (getOrderId !== null) {
+            const paymentData ={
+               'orderId':  getOrderId,
+               'userPhone': getOrder.userPhone,
+               'cardNumber': document.querySelector('#cardnumber').value ,
+               'cardExpiryDate': document.querySelector('#expirationdate').value,
+               'cardHolder': document.querySelector('#name').value,
+               'cardCVVCode': document.querySelector('#securitycode').value
+            }
+            app.client.request(undefined, 'api/payment', 'POST', undefined, paymentData, function (newStatusCode, newResponsePayload) {
+                // Display an error on the form if needed
+                if (newStatusCode !== 200) {
+
+                    //TODO: show error msg
+
+                } else {
+                    localStorage.setItem('paymentResponse' , JSON.stringify(newResponsePayload))
+                    window.location = '/confirmationPayment';
+                }
+            });
+        }
+
+    } else {
+        window.location = '/confirmationPayment';
+    }
+}
+
+app.loadConfirmationPayment = () => {
+    const responseMessage = JSON.parse(localStorage.getItem('paymentResponse'));
+    const msgElement = document.querySelector('.response-msg');
+
+    if(msgElement){
+        msgElement.textContent = responseMessage.Message
+    }
+}
+
 
 // Loop to renew token often
 app.tokenRenewalLoop = function () {
