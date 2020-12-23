@@ -15,7 +15,7 @@ app.config = {
 app.client = {}
 
 // Interface for making API calls
-app.client.request = function (headers, path, method, queryStringObject, payload, callback) {
+app.client.request =  (headers, path, method, queryStringObject, payload, callback) => {
 
     // Set defaults
     headers = typeof (headers) == 'object' && headers !== null ? headers : {};
@@ -83,8 +83,8 @@ app.client.request = function (headers, path, method, queryStringObject, payload
 };
 
 // Bind the logout button
-app.bindLogoutButton = function () {
-    document.getElementById("logoutButton").addEventListener("click", function (e) {
+app.bindLogoutButton =  () => {
+    document.getElementById("logoutButton").addEventListener("click",  (e) => {
 
         // Stop it from redirecting anywhere
         e.preventDefault();
@@ -96,7 +96,7 @@ app.bindLogoutButton = function () {
 };
 
 // Log the user out then redirect them
-app.logUserOut = function (redirectUser) {
+app.logUserOut =  (redirectUser) => {
     // Set redirectUser to default to true
     redirectUser = typeof (redirectUser) == 'boolean' ? redirectUser : true;
 
@@ -107,7 +107,7 @@ app.logUserOut = function (redirectUser) {
     var queryStringObject = {
         'id': tokenId
     };
-    app.client.request(undefined, 'api/tokens', 'DELETE', queryStringObject, undefined, function (statusCode, responsePayload) {
+    app.client.request(undefined, 'api/tokens', 'DELETE', queryStringObject, undefined,  (statusCode, responsePayload) => {
         // Set the app.config token as false
         app.setSessionToken(false);
 
@@ -120,12 +120,12 @@ app.logUserOut = function (redirectUser) {
 };
 
 // Bind the forms
-app.bindForms = function () {
+app.bindForms =  () => {
     if (document.querySelector("form")) {
 
         var allForms = document.querySelectorAll("form");
         for (var i = 0; i < allForms.length; i++) {
-            allForms[i].addEventListener("submit", function (e) {
+            allForms[i].addEventListener("submit",  function (e) {
 
                 // Stop it from submitting
                 e.preventDefault();
@@ -183,7 +183,7 @@ app.bindForms = function () {
                 var queryStringObject = method == 'DELETE' ? payload : {};
 
                 // Call the API
-                app.client.request(undefined, path, method, queryStringObject, payload, function (statusCode, responsePayload) {
+                app.client.request(undefined, path, method, queryStringObject, payload,  (statusCode, responsePayload) => {
                     // Display an error on the form if needed
                     if (statusCode !== 200) {
 
@@ -214,7 +214,7 @@ app.bindForms = function () {
 };
 
 // Form response processor
-app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
+app.formResponseProcessor =  (formId, requestPayload, responsePayload) =>{
     var functionToCall = false;
     // If account creation was successful, try to immediately log the user in
     if (formId == 'accountCreate') {
@@ -224,7 +224,7 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
             'password': requestPayload.password
         };
 
-        app.client.request(undefined, 'api/tokens', 'POST', undefined, newPayload, function (newStatusCode, newResponsePayload) {
+        app.client.request(undefined, 'api/tokens', 'POST', undefined, newPayload,  (newStatusCode, newResponsePayload) => {
             // Display an error on the form if needed
             if (newStatusCode !== 200) {
 
@@ -261,16 +261,6 @@ app.formResponseProcessor = function (formId, requestPayload, responsePayload) {
         window.location = '/account/deleted';
     }
 
-    // // If the user just created a new check successfully, redirect back to the dashboard
-    // if (formId == 'checksCreate') {
-    //     window.location = '/checks/all';
-    // }
-
-    // // If the user just deleted a check, redirect them to the dashboard
-    // if (formId == 'checksEdit2') {
-    //     window.location = '/checks/all';
-    // }
-
 };
 
 app.loadMenuInfo = (userPhone) => {
@@ -278,7 +268,7 @@ app.loadMenuInfo = (userPhone) => {
         phone: userPhone
     }
 
-    app.client.request(undefined, 'api/menu', 'GET', queryStringObject, undefined, function (statusCode, responsePayload) {
+    app.client.request(undefined, 'api/menu', 'GET', queryStringObject, undefined,  (statusCode, responsePayload) => {
         // Display an error on the form if needed
         if (statusCode == 200) {
             localStorage.setItem('menuItems', JSON.stringify(responsePayload));
@@ -408,7 +398,7 @@ app.loadExistingOrder = (orderItems) => {
 }
 
 // Get the session token from localstorage and set it in the app.config object
-app.getSessionToken = function () {
+app.getSessionToken = () => {
     var tokenString = localStorage.getItem('token');
     if (typeof (tokenString) == 'string') {
         try {
@@ -427,7 +417,7 @@ app.getSessionToken = function () {
 };
 
 // Set (or remove) the loggedIn class from the body
-app.setLoggedInClass = function (add) {
+app.setLoggedInClass = (add) => {
     var target = document.querySelector("body");
     if (add) {
         target.classList.add('loggedIn');
@@ -437,7 +427,7 @@ app.setLoggedInClass = function (add) {
 };
 
 // Set the session token in the app.config object as well as localstorage
-app.setSessionToken = function (token) {
+app.setSessionToken = (token) => {
     app.config.sessionToken = token;
     var tokenString = JSON.stringify(token);
     localStorage.setItem('token', tokenString);
@@ -449,7 +439,7 @@ app.setSessionToken = function (token) {
 };
 
 // Renew the token
-app.renewToken = function (callback) {
+app.renewToken = (callback) => {
     var currentToken = typeof (app.config.sessionToken) == 'object' ? app.config.sessionToken : false;
     if (currentToken) {
         // Update the token with a new expiration
@@ -457,14 +447,14 @@ app.renewToken = function (callback) {
             'id': currentToken.id,
             'extend': true,
         };
-        app.client.request(undefined, 'api/tokens', 'PUT', undefined, payload, function (statusCode, responsePayload) {
+        app.client.request(undefined, 'api/tokens', 'PUT', undefined, payload, (statusCode, responsePayload) => {
             // Display an error on the form if needed
             if (statusCode == 200) {
                 // Get the new token details
                 var queryStringObject = {
                     'id': currentToken.id
                 };
-                app.client.request(undefined, 'api/tokens', 'GET', queryStringObject, undefined, function (statusCode, responsePayload) {
+                app.client.request(undefined, 'api/tokens', 'GET', queryStringObject, undefined, (statusCode, responsePayload) => {
                     // Display an error on the form if needed
                     if (statusCode == 200) {
                         app.setSessionToken(responsePayload);
@@ -486,7 +476,7 @@ app.renewToken = function (callback) {
 };
 
 // Load data on the page
-app.loadDataOnPage = function () {
+app.loadDataOnPage = () => {
     // Get the current page from the body class
     var bodyClasses = document.querySelector("body").classList;
     var primaryClass = typeof (bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
@@ -521,7 +511,7 @@ app.loadDataOnPage = function () {
 };
 
 // Load the account edit page specifically
-app.loadAccountEditPage = function () {
+app.loadAccountEditPage = () => {
     // Get the phone number from the current token, or log the user out if none is there
     var phone = typeof (app.config.sessionToken.phone) == 'string' ? app.config.sessionToken.phone : false;
     if (phone) {
@@ -529,7 +519,7 @@ app.loadAccountEditPage = function () {
         var queryStringObject = {
             'phone': phone
         };
-        app.client.request(undefined, 'api/users', 'GET', queryStringObject, undefined, function (statusCode, responsePayload) {
+        app.client.request(undefined, 'api/users', 'GET', queryStringObject, undefined, (statusCode, responsePayload) => {
             if (statusCode == 200) {
                 // Put the data into the forms as values where needed
                 document.querySelector("#accountEdit1 .firstNameInput").value = responsePayload.firstName;
@@ -555,7 +545,7 @@ app.loadAccountEditPage = function () {
 };
 
 // Load the dashboard page specifically
-app.loadChecksListPage = function () {
+app.loadChecksListPage = () => {
     // Get the phone number from the current token, or log the user out if none is there
     var phone = typeof (app.config.sessionToken.phone) == 'string' ? app.config.sessionToken.phone : false;
     if (phone) {
@@ -563,7 +553,7 @@ app.loadChecksListPage = function () {
         var queryStringObject = {
             'phone': phone
         };
-        app.client.request(undefined, 'api/users', 'GET', queryStringObject, undefined, function (statusCode, responsePayload) {
+        app.client.request(undefined, 'api/users', 'GET', queryStringObject, undefined, (statusCode, responsePayload) => {
             if (statusCode == 200) {
 
                 // Determine how many checks the user has
@@ -571,12 +561,12 @@ app.loadChecksListPage = function () {
                 if (allChecks.length > 0) {
 
                     // Show each created check as a new row in the table
-                    allChecks.forEach(function (checkId) {
+                    allChecks.forEach( (checkId) => {
                         // Get the data for the check
                         var newQueryStringObject = {
                             'id': checkId
                         };
-                        app.client.request(undefined, 'api/checks', 'GET', newQueryStringObject, undefined, function (statusCode, responsePayload) {
+                        app.client.request(undefined, 'api/checks', 'GET', newQueryStringObject, undefined, (statusCode, responsePayload) => {
                             if (statusCode == 200) {
                                 var checkData = responsePayload;
                                 // Make the check data into a table row
@@ -631,7 +621,7 @@ app.submitOrder = () => {
     if (getOrder != null) {
 
         if (getOrderId === null) {
-            app.client.request(undefined, 'api/shoppingCard', 'POST', undefined, getOrder, function (newStatusCode, newResponsePayload) {
+            app.client.request(undefined, 'api/shoppingCard', 'POST', undefined, getOrder, (newStatusCode, newResponsePayload) => {
                 // Display an error on the form if needed
                 if (newStatusCode !== 200) {
 
@@ -647,7 +637,7 @@ app.submitOrder = () => {
 
         if (getOrderId !== null) {
             getOrder.orderId = getOrderId;
-            app.client.request(undefined, 'api/shoppingCard', 'PUT', undefined, getOrder, function (newStatusCode, newResponsePayload) {
+            app.client.request(undefined, 'api/shoppingCard', 'PUT', undefined, getOrder, (newStatusCode, newResponsePayload) => {
                 // Display an error on the form if needed
                 if (newStatusCode !== 200) {
 
@@ -725,7 +715,7 @@ app.payButton = () => {
                'cardHolder': document.querySelector('#name').value,
                'cardCVVCode': document.querySelector('#securitycode').value
             }
-            app.client.request(undefined, 'api/payment', 'POST', undefined, paymentData, function (newStatusCode, newResponsePayload) {
+            app.client.request(undefined, 'api/payment', 'POST', undefined, paymentData, (newStatusCode, newResponsePayload) => {
                 // Display an error on the form if needed
                 if (newStatusCode !== 200) {
 
@@ -754,9 +744,9 @@ app.loadConfirmationPayment = () => {
 
 
 // Loop to renew token often
-app.tokenRenewalLoop = function () {
-    setInterval(function () {
-        app.renewToken(function (err) {
+app.tokenRenewalLoop =  () => {
+    setInterval( () => {
+        app.renewToken( (err) => {
             if (!err) {
                 console.log("Token renewed successfully @ " + Date.now());
             }
@@ -765,7 +755,7 @@ app.tokenRenewalLoop = function () {
 };
 
 // Init (bootstrapping)
-app.init = function () {
+app.init = () => {
 
     app.addEventsListener();
 
@@ -791,6 +781,6 @@ app.init = function () {
 };
 
 // Call the init processes after the window loads
-window.onload = function () {
+window.onload = () => {
     app.init();
 };
