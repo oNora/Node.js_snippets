@@ -10,6 +10,11 @@ const debug = util.debuglog('cli');
 const events = require('events');
 class _events extends events { };
 const e = new _events();
+const os = require('os');
+const v8 = require('v8');
+const _data = require('./data');
+const _logs = require('./logs');
+const helpers = require('./helpers');
 
 // Instantiate the cli module object
 const cli = {};
@@ -158,37 +163,199 @@ cli.responders.exit = () => {
 
 // Stats
 cli.responders.stats = () => {
-    console.log("You asked for stats");
+    // Compile an object of stats
+    const stats = {
+        'Load Average': os.loadavg().join(' '),
+        'CPU Count': os.cpus().length,
+        'Free Memory': os.freemem(),
+        'Current Malloced Memory': v8.getHeapStatistics().malloced_memory,
+        'Peak Malloced Memory': v8.getHeapStatistics().peak_malloced_memory,
+        'Allocated Heap Used (%)': Math.round((v8.getHeapStatistics().used_heap_size / v8.getHeapStatistics().total_heap_size) * 100),
+        'Available Heap Allocated (%)': Math.round((v8.getHeapStatistics().total_heap_size / v8.getHeapStatistics().heap_size_limit) * 100),
+        'Uptime': os.uptime() + ' Seconds'
+    };
+
+    // Create a header for the stats
+    cli.horizontalLine();
+    cli.centered('SYSTEM STATISTICS');
+    cli.horizontalLine();
+    cli.verticalSpace(2);
+
+    // Log out each stat
+    for (let key in stats) {
+
+        if (stats.hasOwnProperty(key)) {
+            let value = stats[key];
+            let line = `\x1b[33m ${key} \x1b[0m`;
+            const padding = 60 - line.length;
+
+            for (i = 0; i < padding; i++) {
+                line += ' ';
+            }
+
+            line += value;
+            console.log(line);
+            cli.verticalSpace();
+        }
+
+    }
+
+    // Create a footer for the stats
+    cli.verticalSpace();
+    cli.horizontalLine();
 };
 
 // List Users
 cli.responders.listUsers = () => {
-    console.log("You asked to list users");
+    _data.list('users', (err, userIds) => {
+
+        if (!err && userIds && userIds.length > 0) {
+            cli.verticalSpace();
+
+            userIds.forEach((userId) => {
+
+                _data.read('users', userId, (err, userData) => {
+                    if (!err && userData) {
+                        let line = 'Name: ' + userData.firstName + ' ' + userData.lastName + ' Phone: ' + userData.phone + ' Checks: ';
+                        const numberOfChecks = typeof (userData.checks) == 'object' && userData.checks instanceof Array && userData.checks.length > 0 ? userData.checks.length : 0;
+                        line += numberOfChecks;
+
+                        console.log(line);
+                        cli.verticalSpace();
+                    }
+                });
+
+            });
+
+        }
+
+    });
 };
 
 // More user info
 cli.responders.moreUserInfo = (str) => {
-    console.log("You asked for more user info", str);
+    // Get ID from string
+    const arr = str.split('--');
+    const userId = typeof (arr[1]) == 'string' && arr[1].trim().length > 0 ? arr[1].trim() : false;
+    if (userId) {
+        // Lookup the user
+        _data.read('users', userId, (err, userData) => {
+            if (!err && userData) {
+                // Remove the hashed password
+                delete userData.hashedPassword;
+
+                // Print their JSON object with text highlighting
+                cli.verticalSpace();
+
+                console.dir(userData, { 'colors': true });
+                cli.verticalSpace();
+            }
+        });
+    }
 };
 
 // List Checks
 cli.responders.listChecks = (str) => {
-    console.log("You asked to list checks", str);
-};
+    _data.list('checks', (err, checkIds) => {
+
+        if (!err && checkIds && checkIds.length > 0) {
+            cli.verticalSpace();
+            checkIds.forEach((checkId) => {
+
+                _data.read('checks', checkId, (err, checkData) => {
+                    if (!err && checkData) {
+                        let includeCheck = false;
+                        const lowerString = str.toLowerCase();
+                        // Get the state, default to down
+                        const state = typeof (checkData.state) == 'string' ? checkData.state : 'down';
+                        // Get the state, default to unknown
+                        const stateOrUnknown = typeof (checkData.state) == 'string' ? checkData.state : 'unknown';
+                        // If the user has specified that state, or hasn't specified any state
+
+                        if ((lowerString.indexOf('--' + state) > -1) || (lowerString.indexOf('--down') == -1 && lowerString.indexOf('--up') == -1)) {
+                            const line = 'ID: ' + checkData.id + ' ' + checkData.method.toUpperCase() + ' ' + checkData.protocol + '://' + checkData.url + ' State: ' + stateOrUnknown;
+                            console.log(line);
+                            cli.verticalSpace();
+                        }
+
+                    }
+                });
+
+            });
+        }
+
+    });
+}
 
 // More check info
 cli.responders.moreCheckInfo = (str) => {
-    console.log("You asked for more check info", str);
+    // Get ID from string
+    const arr = str.split('--');
+    const checkId = typeof (arr[1]) == 'string' && arr[1].trim().length > 0 ? arr[1].trim() : false;
+
+    if (checkId) {
+
+        // Lookup the user
+        _data.read('checks', checkId, (err, checkData) => {
+
+            if (!err && checkData) {
+
+                // Print their JSON object with text highlighting
+                cli.verticalSpace();
+                console.dir(checkData, { 'colors': true });
+                cli.verticalSpace();
+            }
+
+        });
+
+    }
 };
 
 // List Logs
 cli.responders.listLogs = () => {
-    console.log("You asked to list logs");
+    _logs.list(true, function (err, logFileNames) {
+        if (!err && logFileNames && logFileNames.length > 0) {
+            cli.verticalSpace();
+            logFileNames.forEach(function (logFileName) {
+                if (logFileName.indexOf('-') > -1) {
+                    console.log(logFileName);
+                    cli.verticalSpace();
+                }
+            });
+        }
+    });
 };
 
 // More logs info
 cli.responders.moreLogInfo = (str) => {
-    console.log("You asked for more log info", str);
+    // Get logFileName from string
+    const arr = str.split('--');
+    const logFileName = typeof (arr[1]) == 'string' && arr[1].trim().length > 0 ? arr[1].trim() : false;
+
+    if (logFileName) {
+        cli.verticalSpace();
+
+        // Decompress it
+        _logs.decompress(logFileName, (err, strData) => {
+            if (!err && strData) {
+
+                // Split it into lines
+                const arr = strData.split('\n');
+                arr.forEach((jsonString) => {
+
+                    const logObject = helpers.parseJsonToObject(jsonString);
+                    if (logObject && JSON.stringify(logObject) !== '{}') {
+                        console.dir(logObject, { 'colors': true });
+                        cli.verticalSpace();
+                    }
+
+                });
+
+            }
+        });
+
+    }
+
 };
 
 
